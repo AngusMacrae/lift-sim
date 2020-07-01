@@ -63,3 +63,102 @@ select {
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
+
+body {
+  color: #333;
+  background-color: #eee;
+}
+
+.page-container {
+  max-width: 700px;
+  min-height: 100vh;
+  margin: 0 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+main {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
+.command-palette {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+}
+
+.command-palette li {
+  margin: 0 1rem;
+}
+
+.passenger img {
+  height: 40px;
+  width: 40px;
+}
+
+.building {
+  position: relative;
+}
+
+.lift-shaft {
+  height: 100%;
+  padding: 5px;
+  border: 1px solid #333;
+  background-color: #eee;
+  position: absolute;
+  left: 20%;
+}
+
+.lift {
+  height: 100px;
+  width: 85px;
+  background-color: #333;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.floor {
+  height: 110px;
+  margin-bottom: -1px;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+  z-index: -999;
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.floor .floor-label {
+  position: absolute;
+}
+
+.floor .disembark-area {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 20%;
+          flex: 0 0 20%;
+  margin-right: 95px;
+}
+
+.floor .waiting-area {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
+footer {
+  text-align: center;
+}

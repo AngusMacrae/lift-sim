@@ -1,2 +1,82 @@
 @import 'reset';
 @import 'typography';
+
+body {
+  color: #333;
+  background-color: #eee;
+}
+
+.page-container {
+  max-width: 700px;
+  min-height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+.command-palette {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+
+  li {
+    margin: 0 1rem;
+  }
+}
+
+.passenger img {
+  height: 40px;
+  width: 40px;
+}
+
+.building {
+  position: relative;
+}
+
+.lift-shaft {
+  height: 100%;
+  padding: 5px;
+  border: 1px solid #333;
+  background-color: #eee;
+  position: absolute;
+  left: 20%;
+}
+
+.lift {
+  height: 100px;
+  width: 85px;
+  background-color: #333;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.floor {
+  height: 110px;
+  margin-bottom: -1px;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+  z-index: -999;
+  position: relative;
+  display: flex;
+
+  .floor-label {
+    position: absolute;
+  }
+
+  .disembark-area {
+    flex: 0 0 20%;
+    margin-right: 95px;
+  }
+
+  .waiting-area {
+    flex: 1;
+  }
+}
+
+footer {
+  text-align: center;
+}

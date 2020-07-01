@@ -7,6 +7,48 @@
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
+    <div class="page-container">
+      <header>
+        <h1>Lift Sim</h1>
+      </header>
+      <main>
+        <ul class="command-palette">
+          <li class="add-passenger passenger" data-destination="0"><img src="img/passenger.svg" /></li>
+          <li class="add-passenger passenger" data-destination="1"><img src="img/passenger.svg" /></li>
+          <li class="add-passenger passenger" data-destination="2"><img src="img/passenger.svg" /></li>
+          <li class="add-passenger passenger" data-destination="3"><img src="img/passenger.svg" /></li>
+          <li class="add-passenger passenger" data-destination="4"><img src="img/passenger.svg" /></li>
+        </ul>
+        <div class="building">
+          <div class="lift-shaft">
+            <div class="lift"></div>
+          </div>
+          <div class="floor" data-number="3">
+            <span class="floor-label">3rd floor</span>
+            <div class="disembark-area"></div>
+            <div class="waiting-area"></div>
+          </div>
+          <div class="floor" data-number="2">
+            <span class="floor-label">2nd floor</span>
+            <div class="disembark-area"></div>
+            <div class="waiting-area"></div>
+          </div>
+          <div class="floor" data-number="1">
+            <span class="floor-label">1st floor</span>
+            <div class="disembark-area"></div>
+            <div class="waiting-area"></div>
+          </div>
+          <div class="floor" data-number="0">
+            <span class="floor-label">Ground floor</span>
+            <div class="disembark-area"></div>
+            <div class="waiting-area"></div>
+          </div>
+        </div>
+      </main>
+      <footer>
+        <p><small>Lift Sim | Angus Macrae | 2020</small></p>
+      </footer>
+    </div>
     <script src="js/script.js"></script>
   </body>
 </html>
