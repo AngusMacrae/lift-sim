@@ -1,9 +1,12 @@
 @import 'reset';
 @import 'typography';
+@import 'config';
 
 body {
   color: #333;
   background-color: #eee;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .page-container {
@@ -28,9 +31,13 @@ main {
   }
 }
 
-.passenger img {
-  height: 40px;
-  width: 40px;
+.passenger {
+  svg {
+    height: 40px;
+    width: 40px;
+    pointer-events: none;
+    fill: var(--color);
+  }
 }
 
 .building {
@@ -40,41 +47,83 @@ main {
 .lift-shaft {
   height: 100%;
   padding: 5px;
+  z-index: 1;
   border: 1px solid #333;
   background-color: #eee;
   position: absolute;
-  left: 20%;
+  left: $lift-shaft-location;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .lift {
-  height: 100px;
-  width: 85px;
+  height: $lift-height;
+  width: $lift-width;
   background-color: #333;
   margin-right: auto;
   margin-left: auto;
 }
 
 .floor {
-  height: 110px;
+  height: calc(#{$lift-height} + 10px);
   margin-bottom: -1px;
   border-top: 1px solid #333;
   border-bottom: 1px solid #333;
-  z-index: -999;
   position: relative;
   display: flex;
+  box-shadow: 0 -22px 22px -22px var(--color) inset;
 
   .floor-label {
     position: absolute;
   }
 
-  .disembark-area {
-    flex: 0 0 20%;
-    margin-right: 95px;
+  .disembark-area-container {
+    flex: 0 0 $lift-shaft-location;
+    margin-right: calc(#{$lift-width} + 10px);
   }
 
-  .waiting-area {
+  .waiting-area-container {
     flex: 1;
   }
+
+  .disembark-area,
+  .waiting-area {
+    height: 100%;
+    margin: 0;
+    padding: 0.5rem;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .disembark-area {
+    flex-direction: row-reverse;
+  }
+}
+
+[data-destination='4'],
+[data-number='4'] {
+  --color: #{$floor-4-color};
+}
+
+[data-destination='3'],
+[data-number='3'] {
+  --color: #{$floor-3-color};
+}
+
+[data-destination='2'],
+[data-number='2'] {
+  --color: #{$floor-2-color};
+}
+
+[data-destination='1'],
+[data-number='1'] {
+  --color: #{$floor-1-color};
+}
+
+[data-destination='0'],
+[data-number='0'] {
+  --color: #{$floor-0-color};
 }
 
 footer {

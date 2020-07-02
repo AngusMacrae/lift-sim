@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lift Sim</title>
     <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/svg-inject.min.js"></script>
   </head>
   <body>
     <div class="page-container">
@@ -13,35 +14,40 @@
       </header>
       <main>
         <ul class="command-palette">
-          <li class="add-passenger passenger" data-destination="0"><img src="img/passenger.svg" /></li>
-          <li class="add-passenger passenger" data-destination="1"><img src="img/passenger.svg" /></li>
-          <li class="add-passenger passenger" data-destination="2"><img src="img/passenger.svg" /></li>
-          <li class="add-passenger passenger" data-destination="3"><img src="img/passenger.svg" /></li>
-          <li class="add-passenger passenger" data-destination="4"><img src="img/passenger.svg" /></li>
+          <li class="passenger" data-destination="2" draggable="true" ondragstart="dragstart_handler(event)"><img src="img/passenger.svg" onload="SVGInject(this)" /></li>
+          <li class="passenger" data-destination="1" draggable="true" ondragstart="dragstart_handler(event)"><img src="img/passenger.svg" onload="SVGInject(this)" /></li>
+          <li class="passenger" data-destination="0" draggable="true" ondragstart="dragstart_handler(event)"><img src="img/passenger.svg" onload="SVGInject(this)" /></li>
         </ul>
         <div class="building">
           <div class="lift-shaft">
             <div class="lift"></div>
           </div>
-          <div class="floor" data-number="3">
-            <span class="floor-label">3rd floor</span>
-            <div class="disembark-area"></div>
-            <div class="waiting-area"></div>
-          </div>
           <div class="floor" data-number="2">
             <span class="floor-label">2nd floor</span>
-            <div class="disembark-area"></div>
-            <div class="waiting-area"></div>
+            <div class="disembark-area-container">
+              <ul class="disembark-area"></ul>
+            </div>
+            <div class="waiting-area-container">
+              <ul class="waiting-area" ondrop="drop_handler(event)" ondragover="dragover_handler(event)"></ul>
+            </div>
           </div>
           <div class="floor" data-number="1">
             <span class="floor-label">1st floor</span>
-            <div class="disembark-area"></div>
-            <div class="waiting-area"></div>
+            <div class="disembark-area-container">
+              <ul class="disembark-area"></ul>
+            </div>
+            <div class="waiting-area-container">
+              <ul class="waiting-area" ondrop="drop_handler(event)" ondragover="dragover_handler(event)"></ul>
+            </div>
           </div>
           <div class="floor" data-number="0">
             <span class="floor-label">Ground floor</span>
-            <div class="disembark-area"></div>
-            <div class="waiting-area"></div>
+            <div class="disembark-area-container">
+              <ul class="disembark-area"></ul>
+            </div>
+            <div class="waiting-area-container">
+              <ul class="waiting-area" ondrop="drop_handler(event)" ondragover="dragover_handler(event)"></ul>
+            </div>
           </div>
         </div>
       </main>
