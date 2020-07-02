@@ -5,38 +5,54 @@ class Passenger {
     // this.id = uuid();
     this.destination = destination;
   }
+  render() {
+    return `<div class="passenger" data-destination="${this.destination}">
+              <img src="img/passenger.svg" />
+            </div>'`;
+  }
 }
 
 class Building {
-  constructor() {
+  constructor(numberOfFloors = 3) {
     this.floors = [new Floor(0), new Floor(1), new Floor(2)];
-    this.element = document.querySelector('.building');
   }
-  // addFloor() {
-  //   let newFloorNumber = this.floors.length;
-  //   this.element.insertAdjacentHTML('afterbegin', '<div class="floor" data-number="' + newFloorNumber + '"><p>New floor</p></div>');
-  //   this.floors.push(new Floor(newFloorNumber));
-  // }
-  // removeFloor() {
-  //   this.floors.pop();
-  // }
+  render() {
+    return `<div class="building">
+              <div class="lift-shaft">
+                <div class="lift"></div>
+              </div>
+              ${this.floors.map(floor => floor.render()).join('')}
+            </div>`;
+  }
+  // addFloor() {}
+  // removeFloor() {}
   // addLift() {}
   // removeLift() {}
 }
 
 class Floor {
-  constructor(floorNumber) {
+  constructor(floorNumber = 0) {
     this.waitingPassengers = [];
-    this.element = document.querySelector('.floor[data-number="' + floorNumber + '"]');
-    this.disembarkArea = this.element.querySelector('.disembark-area');
-    this.waitingArea = this.element.querySelector('.waiting-area');
+    this.floorNumber = floorNumber;
   }
   addPassenger(destination = 0) {
     this.waitingPassengers.push(new Passenger(destination));
-    this.waitingArea.insertAdjacentHTML('beforeend', '<div class="passenger" data-destination="' + destination + '"><img src="img/passenger.svg" /></div>');
   }
   boardPassenger(id) {
-    this.waitingPassengers.filter(waitingPassenger => waitingPassenger.id != id);
+    this.waitingPassengers = this.waitingPassengers.filter(waitingPassenger => waitingPassenger.id != id);
+  }
+  render() {
+    return `<div class="floor" data-number="${this.floorNumber}">
+              <span class="floor-label">${this.floorNumber}th floor</span>
+              <div class="disembark-area-container">
+                <ul class="disembark-area"></ul>
+              </div>
+              <div class="waiting-area-container">
+                <ul class="waiting-area" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">
+                  ${this.waitingPassengers.map(passenger => passenger.render()).join('')}
+                </ul>
+              </div>
+            </div>`;
   }
 }
 
@@ -60,18 +76,32 @@ class Lift {
   setDestination() {
     // set destination based on current floor, destination, callQueue and passenger destinations
   }
+  exchangePassengers() {
+    this.disembarkPassengers();
+    this.embarkPassengers();
+    this.callQueue = this.callQueue.filter(floor => floor != this.currentFloor);
+    this.setDestination();
+    this.updateDOM();
+  }
   disembarkPassengers() {
     this.passengers.filter(passenger => passenger.destination != this.currentFloor);
   }
-  embarkPassengers(waitingPassengers) {
-    waitingPassengers.forEach(passenger => {
+  embarkPassengers() {
+    building.floors[this.currentFloor].waitingPassengers.forEach(passenger => {
       if ((passenger.destination > this.currentFloor && this.ascending()) || (passenger.destination < this.currentFloor && this.descending())) {
         this.passengers.push(passenger);
         building.floors[this.currentFloor].boardPassenger(passenger.id);
       }
     });
-    this.callQueue = this.callQueue.filter(floor => floor != this.currentFloor);
-    this.setDestination();
+  }
+  updateDOM() {
+    document.querySelector('.lift').outerHTML = this.render();
+    document.querySelector('.floor[data-number="' + this.currentFloor + '"]').outerHTML = building.floors[this.currentFloor].render();
+  }
+  render() {
+    return `<div class="lift">
+              ${this.passengers.map(passenger => passenger.render()).join('')}
+            </div>`;
   }
 }
 
@@ -99,5 +129,5 @@ function drop_handler(event) {
 let addPassengerDraggables = document.querySelectorAll('.command-palette .passenger');
 addPassengerDraggables.forEach.addEventListener('dragstart', dragstart_handler);
 
-const building = new Building();
+const building = new Building(4);
 const lift = new Lift();
