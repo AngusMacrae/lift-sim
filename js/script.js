@@ -14,7 +14,10 @@ class Passenger {
 
 class Building {
   constructor(numberOfFloors = 3) {
-    this.floors = [new Floor(0), new Floor(1), new Floor(2)];
+    this.floors = [];
+    for (let i = 0; i < numberOfFloors; i++) {
+      this.floors.push(new Floor(i));
+    }
   }
   render() {
     return `<div class="building">
