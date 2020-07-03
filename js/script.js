@@ -21,10 +21,10 @@ class Building {
   }
   render() {
     return `<div class="building">
+              ${this.floors.map(floor => floor.render()).join('')}
               <div class="lift-shaft">
                 <div class="lift"></div>
               </div>
-              ${this.floors.map(floor => floor.render()).join('')}
             </div>`;
   }
   // addFloor() {}

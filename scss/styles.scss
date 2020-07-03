@@ -52,6 +52,7 @@ main {
   background-color: #eee;
   position: absolute;
   left: $lift-shaft-location;
+  top: 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
