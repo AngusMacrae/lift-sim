@@ -151,8 +151,7 @@ function drop_handler(event) {
 }
 
 const building = new Building(4);
-document.querySelector('main').insertAdjacentHTML('beforeend', building.render());
-// const lift = new Lift();
+document.querySelector('#building-placeholder').outerHTML = building.render();
 
 let addPassengerDraggables = document.querySelectorAll('.command-palette .passenger');
 addPassengerDraggables.forEach.addEventListener('dragstart', dragstart_handler);
