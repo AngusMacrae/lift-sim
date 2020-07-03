@@ -123,6 +123,12 @@ function numberToOrdinal(inputNumber) {
   }
 }
 
+function getTranslateY(myElement) {
+  let style = window.getComputedStyle(myElement);
+  let matrix = new DOMMatrix(style.transform);
+  return matrix.m42;
+}
+
 function dragstart_handler(event) {
   event.dataTransfer.setData('text/plain', event.target.dataset.destination);
   event.dataTransfer.dropEffect = 'move';
