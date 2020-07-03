@@ -6,9 +6,9 @@ class Passenger {
     this.destination = destination;
   }
   render() {
-    return `<div class="passenger" data-destination="${this.destination}">
-              <img src="img/passenger.svg" />
-            </div>'`;
+    return `<li class="passenger" data-destination="${this.destination}">
+              <img src="img/passenger.svg" onload="SVGInject(this)" />
+            </li>`;
   }
 }
 
@@ -97,10 +97,6 @@ class Lift {
       }
     });
   }
-  updateDOM() {
-    document.querySelector('.lift').outerHTML = this.render();
-    document.querySelector('.floor[data-number="' + this.currentFloor + '"]').outerHTML = building.floors[this.currentFloor].render();
-  }
   render() {
     return `<div class="lift">
               ${this.passengers.map(passenger => passenger.render()).join('')}
@@ -139,8 +135,8 @@ function drop_handler(event) {
   const floorNumber = event.target.closest('.floor').dataset.number;
   if (passengerDestination != floorNumber) {
     const waitingArea = event.target.closest('.waiting-area');
-    const waitingPassengerHTML = '<li class="passenger" data-destination="' + passengerDestination + '"><img src="img/passenger.svg" onload="SVGInject(this)" /></li>';
-    waitingArea.insertAdjacentHTML('beforeend', waitingPassengerHTML);
+    building.floors[floorNumber].waitingPassengers.push(new Passenger(passengerDestination));
+    event.target.closest('.floor').outerHTML = building.floors[floorNumber].render();
   }
 }
 
