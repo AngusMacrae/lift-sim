@@ -66,6 +66,7 @@ class Lift {
     this.callQueue = [];
     this.destination = null;
     this.currentFloor = startFloor;
+    this.capacity = 9;
   }
   ascending() {
     return this.destination > this.currentFloor;
@@ -100,7 +101,9 @@ class Lift {
   }
   render() {
     return `<div class="lift">
+              <ul class="lift-passengers">
               ${this.passengers.map(passenger => passenger.render()).join('')}
+              </ul>
             </div>`;
   }
 }
