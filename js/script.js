@@ -15,7 +15,7 @@ class Passenger {
 class Building {
   constructor(numberOfFloors = 3) {
     this.floors = [];
-    for (let i = 0; i < numberOfFloors; i++) {
+    for (let i = numberOfFloors - 1; i >= 0; i--) {
       this.floors.push(new Floor(i));
     }
     this.lift = new Lift();
