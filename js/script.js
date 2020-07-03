@@ -46,7 +46,7 @@ class Floor {
   }
   render() {
     return `<div class="floor" data-number="${this.floorNumber}">
-              <span class="floor-label">${this.floorNumber}th floor</span>
+              <span class="floor-label">${numberToOrdinal(this.floorNumber)} floor</span>
               <div class="disembark-area-container">
                 <ul class="disembark-area"></ul>
               </div>
@@ -105,6 +105,21 @@ class Lift {
     return `<div class="lift">
               ${this.passengers.map(passenger => passenger.render()).join('')}
             </div>`;
+  }
+}
+
+function numberToOrdinal(inputNumber) {
+  switch (inputNumber) {
+    case 0:
+      return 'Ground';
+    case 1:
+      return '1st';
+    case 2:
+      return '2nd';
+    case 3:
+      return '3rd';
+    default:
+      return `${inputNumber}th`;
   }
 }
 
