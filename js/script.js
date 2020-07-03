@@ -20,6 +20,9 @@ class Building {
     }
     this.lift = new Lift();
   }
+  element() {
+    return document.querySelector('.building');
+  }
   render() {
     return `<div class="building">
               ${this.floors.map(floor => floor.render()).join('')}
@@ -28,16 +31,18 @@ class Building {
               </div>
             </div>`;
   }
-  // addFloor() {}
-  // removeFloor() {}
-  // addLift() {}
-  // removeLift() {}
+  renderInPlace() {
+    this.element().outerHTML = this.render();
+}
 }
 
 class Floor {
   constructor(floorNumber = 0) {
     this.waitingPassengers = [];
     this.floorNumber = floorNumber;
+  }
+  element() {
+    return document.querySelector(`.floor[data-number="${this.floorNumber}"]`);
   }
   addPassenger(destination = 0) {
     this.waitingPassengers.push(new Passenger(destination));
@@ -58,6 +63,9 @@ class Floor {
               </div>
             </div>`;
   }
+  renderInPlace() {
+    this.element().outerHTML = this.render();
+}
 }
 
 class Lift {
@@ -68,12 +76,15 @@ class Lift {
     this.currentFloor = startFloor;
     this.capacity = 9;
   }
-  ascending() {
-    return this.destination > this.currentFloor;
+  element() {
+    return document.querySelector('.lift');
   }
-  descending() {
-    return this.destination < this.currentFloor;
-  }
+  // ascending() {
+  //   return this.destination > this.currentFloor;
+  // }
+  // descending() {
+  //   return this.destination < this.currentFloor;
+  // }
   call(floor) {
     this.callQueue.unshift(floor);
     this.setDestination();
@@ -105,6 +116,9 @@ class Lift {
               ${this.passengers.map(passenger => passenger.render()).join('')}
               </ul>
             </div>`;
+  }
+  renderInPlace() {
+    this.element().outerHTML = this.render();
   }
 }
 
