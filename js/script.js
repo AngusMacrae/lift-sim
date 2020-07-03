@@ -18,12 +18,13 @@ class Building {
     for (let i = 0; i < numberOfFloors; i++) {
       this.floors.push(new Floor(i));
     }
+    this.lift = new Lift();
   }
   render() {
     return `<div class="building">
               ${this.floors.map(floor => floor.render()).join('')}
               <div class="lift-shaft">
-                <div class="lift"></div>
+                ${this.lift.render()}
               </div>
             </div>`;
   }
@@ -140,8 +141,9 @@ function drop_handler(event) {
   }
 }
 
+const building = new Building(4);
+document.querySelector('main').insertAdjacentHTML('beforeend', building.render());
+// const lift = new Lift();
+
 let addPassengerDraggables = document.querySelectorAll('.command-palette .passenger');
 addPassengerDraggables.forEach.addEventListener('dragstart', dragstart_handler);
-
-const building = new Building(4);
-const lift = new Lift();
