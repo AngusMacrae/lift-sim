@@ -103,6 +103,7 @@ main {
 
   .waiting-area-container {
     flex: 1;
+    position: relative;
   }
 
   .disembark-area,
@@ -116,6 +117,24 @@ main {
 
   .disembark-area {
     flex-direction: row-reverse;
+  }
+}
+
+.call-arrow-container {
+  position: absolute;
+  padding: 2px 7px;
+
+  .arrow {
+    width: 16px;
+    fill: #ddd;
+
+    &.active {
+      fill: #333;
+    }
+  }
+
+  .arrow-down {
+    transform: rotate(180deg);
   }
 }
 

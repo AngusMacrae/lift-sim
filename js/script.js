@@ -57,6 +57,10 @@ class Floor {
                 <ul class="disembark-area"></ul>
               </div>
               <div class="waiting-area-container">
+                <div class="call-arrow-container">
+                  <img class="arrow arrow-up" src="img/up-arrow.svg" onload="SVGInject(this)" />
+                  <img class="arrow arrow-down" src="img/up-arrow.svg" onload="SVGInject(this)" />
+                </div>
                 <ul class="waiting-area" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">
                   ${this.waitingPassengers.map(passenger => passenger.render()).join('')}
                 </ul>
