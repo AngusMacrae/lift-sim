@@ -122,6 +122,17 @@ class Lift {
   }
 }
 
+class AddPassenger {
+  constructor(destination) {
+    this.destination = destination;
+  }
+  render() {
+    return `<li class="passenger" data-destination="${this.destination}" draggable="true" ondragstart="dragstart_handler(event)">
+              <img src="img/passenger.svg" onload="SVGInject(this)" />
+            </li>`;
+  }
+}
+
 function numberToOrdinal(inputNumber) {
   switch (inputNumber) {
     case 0:
@@ -165,7 +176,12 @@ function drop_handler(event) {
 }
 
 const building = new Building(4);
+
 document.querySelector('#building-placeholder').outerHTML = building.render();
+document.querySelector('#commands').innerHTML = building.floors
+  .map(floor => new AddPassenger(floor.floorNumber))
+  .map(addpassenger => addpassenger.render())
+  .join('');
 
 let addPassengerDraggables = document.querySelectorAll('.command-palette .passenger');
 addPassengerDraggables.forEach.addEventListener('dragstart', dragstart_handler);

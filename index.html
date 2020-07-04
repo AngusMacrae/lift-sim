@@ -13,12 +13,7 @@
         <h1>Lift Sim</h1>
       </header>
       <main>
-        <ul class="command-palette">
-          <li class="passenger" data-destination="3" draggable="true" ondragstart="dragstart_handler(event)"><img src="img/passenger.svg" onload="SVGInject(this)" /></li>
-          <li class="passenger" data-destination="2" draggable="true" ondragstart="dragstart_handler(event)"><img src="img/passenger.svg" onload="SVGInject(this)" /></li>
-          <li class="passenger" data-destination="1" draggable="true" ondragstart="dragstart_handler(event)"><img src="img/passenger.svg" onload="SVGInject(this)" /></li>
-          <li class="passenger" data-destination="0" draggable="true" ondragstart="dragstart_handler(event)"><img src="img/passenger.svg" onload="SVGInject(this)" /></li>
-        </ul>
+        <ul id="commands" class="command-palette"></ul>
         <div id="building-placeholder"></div>
       </main>
       <footer>
