@@ -127,7 +127,8 @@ class Lift {
       await this.disembarkPassengers(currentFloor);
       await this.embarkPassengers(currentFloor);
       await delay(1000);
-      await this.setDestination(currentFloor);
+      this.updateCallQueue(currentFloor);
+      this.setDestination(currentFloor);
       resolve();
     });
   }
@@ -181,9 +182,10 @@ class Lift {
       }
     });
   }
-  setDestination(currentFloor) {
+  updateCallQueue(currentFloor) {
     this.callQueue = this.callQueue.filter(call => call.origin != currentFloor || call.ascending != this.ascending);
-    if (this.ascending) {
+  }
+  setDestination(currentFloor) {
       // TODO: cleanup
       // nearest call origin (matching current direction) or passenger destination in current direction
       // if none then furthest call origin
