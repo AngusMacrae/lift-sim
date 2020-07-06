@@ -56,7 +56,8 @@ class Floor {
   }
   addPassenger(destination) {
     this.waitingPassengers.push(new Passenger(destination));
-    lift.call(this.floorNumber);
+    let ascending = destination > this.floorNumber ? true : false;
+    lift.call(new Call(this.floorNumber, ascending));
   }
   // removePassenger() {}
   render() {
@@ -97,16 +98,21 @@ class Lift {
     return document.querySelector('.lift');
   }
   destinationQueue() {
-    return [...this.callQueue, ...this.passengers.map(passenger => passenger.destination)];
+    // filter callQueue for only same direction
+    return [...this.callQueue.filter(call => (call.ascending = this.ascending)), ...this.passengers.map(passenger => passenger.destination)];
   }
   setLocation(newLocation) {
     this.currentLocation = newLocation;
     this.element().style.transform = `translateY(${newLocation}px)`;
   }
   call(newCall) {
-    let isUnique = !this.callQueue.includes(newCall);
-    if (isUnique) {
+    let isUnique = this.callQueue.findIndex(call => call.origin == newCall.origin && call.ascending == newCall.ascending);
+    if (isUnique == -1) {
       this.callQueue.push(newCall);
+    }
+    if (this.callQueue.length == 1) {
+      this.setDestination(0);
+      window.requestAnimationFrame(moveLift);
     }
     // if newCall is on current path
     // and outside stopping distance
@@ -124,12 +130,12 @@ class Lift {
   }
   setDirection(currentFloor) {
     if (this.ascending) {
-      let highest = Math.max(...this.destinationQueue());
+      let highest = Math.max(...this.callQueue.map(call => call.origin), ...this.passengers.map(passenger => passenger.destination));
       if (highest <= currentFloor && building.floors[currentFloor].callUp() == false) {
         this.ascending = false;
       }
     } else {
-      let lowest = Math.min(...this.destinationQueue());
+      let lowest = Math.min(...this.callQueue.map(call => call.origin), ...this.passengers.map(passenger => passenger.destination));
       if (lowest >= currentFloor && building.floors[currentFloor].callDown() == false) {
         this.ascending = true;
       }
@@ -173,14 +179,13 @@ class Lift {
     });
   }
   setDestination(currentFloor) {
-    if (building.floors[currentFloor].callUp() == false && building.floors[currentFloor].callDown() == false) {
-      this.callQueue = this.callQueue.filter(floorNumber => floorNumber != currentFloor);
-    }
+    this.callQueue = this.callQueue.filter(call => call.origin != currentFloor || call.ascending != this.ascending);
     if (this.ascending) {
       // TODO: fix - these Math functions will return +/- infinity once there are no passengers remaining
-      this.destination = +Math.min(...this.destinationQueue().filter(floorNumber => floorNumber > currentFloor));
+      // TODO: fix - also if the first passenger added wants to descend, these also will return infinity
+      this.destination = Math.min(...this.callQueue.filter(call => call.origin > currentFloor && call.ascending == this.ascending).map(call => call.origin), ...this.passengers.filter(passenger => passenger.destination > currentFloor).map(passenger => passenger.destination));
     } else {
-      this.destination = +Math.max(...this.destinationQueue().filter(floorNumber => floorNumber < currentFloor));
+      this.destination = Math.max(...this.callQueue.filter(call => call.origin < currentFloor && call.ascending == this.ascending).map(call => call.origin), ...this.passengers.filter(passenger => passenger.destination < currentFloor).map(passenger => passenger.destination));
     }
     console.log(this);
   }
@@ -193,6 +198,13 @@ class Lift {
   }
   renderInPlace() {
     this.element().outerHTML = this.render();
+  }
+}
+
+class Call {
+  constructor(origin, ascending) {
+    this.origin = origin;
+    this.ascending = ascending;
   }
 }
 
@@ -278,7 +290,9 @@ async function moveLift(timestamp) {
     start = undefined;
     lift.setLocation(destinationLocation);
     await lift.exchangePassengers(destinationFloor);
-    window.requestAnimationFrame(moveLift);
+    if (lift.passengers.length > 0 || lift.callQueue.length > 0) {
+      window.requestAnimationFrame(moveLift);
+    }
   } else {
     window.requestAnimationFrame(moveLift);
   }
