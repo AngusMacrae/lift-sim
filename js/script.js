@@ -167,11 +167,16 @@ class Lift {
     });
   }
   setDestination(currentFloor) {
+    if (building.floors[currentFloor].callUp() == false && building.floors[currentFloor].callDown() == false) {
+      this.callQueue = this.callQueue.filter(floorNumber => floorNumber != currentFloor);
+    }
     if (this.ascending) {
+      // TODO: fix - these Math functions will return +/- infinity once there are no passengers remaining
       this.destination = +Math.min(...this.destinationQueue().filter(floorNumber => floorNumber > currentFloor));
     } else {
       this.destination = +Math.max(...this.destinationQueue().filter(floorNumber => floorNumber < currentFloor));
     }
+    console.log(this);
   }
   render() {
     return `<div class="lift">
