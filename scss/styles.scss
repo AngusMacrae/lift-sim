@@ -13,6 +13,7 @@ body {
   max-width: 700px;
   min-height: 100vh;
   margin: 0 auto;
+  padding: 8px;
   display: flex;
   flex-direction: column;
 }
@@ -36,7 +37,7 @@ main {
     height: 40px;
     width: 40px;
     pointer-events: none;
-    fill: var(--color);
+    fill: var(--highlight-color);
   }
 }
 
@@ -90,10 +91,12 @@ main {
   border-bottom: 1px solid #333;
   position: relative;
   display: flex;
-  box-shadow: 0 -22px 22px -22px var(--color) inset;
+  box-shadow: 0 -22px 22px -22px var(--highlight-color) inset;
 
   .floor-label {
     position: absolute;
+    z-index: -1;
+    padding-left: 5px;
   }
 
   .disembark-area-container {
@@ -123,6 +126,7 @@ main {
 .call-arrow-container {
   position: absolute;
   padding: 2px 7px;
+  z-index: -1;
 
   .arrow {
     width: 16px;
@@ -142,29 +146,24 @@ main {
   fill: #333;
 }
 
-[data-destination='4'],
-[data-number='4'] {
-  --color: #{$floor-4-color};
+[data-floor='4'] {
+  --highlight-color: #{$floor-4-color};
 }
 
-[data-destination='3'],
-[data-number='3'] {
-  --color: #{$floor-3-color};
+[data-floor='3'] {
+  --highlight-color: #{$floor-3-color};
 }
 
-[data-destination='2'],
-[data-number='2'] {
-  --color: #{$floor-2-color};
+[data-floor='2'] {
+  --highlight-color: #{$floor-2-color};
 }
 
-[data-destination='1'],
-[data-number='1'] {
-  --color: #{$floor-1-color};
+[data-floor='1'] {
+  --highlight-color: #{$floor-1-color};
 }
 
-[data-destination='0'],
-[data-number='0'] {
-  --color: #{$floor-0-color};
+[data-floor='0'] {
+  --highlight-color: #{$floor-0-color};
 }
 
 footer {

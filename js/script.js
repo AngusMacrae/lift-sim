@@ -3,7 +3,7 @@ class Passenger {
     this.destination = +destination;
   }
   render() {
-    return `<li class="passenger" data-destination="${this.destination}">
+    return `<li class="passenger" data-floor="${this.destination}">
               <img src="img/passenger.svg" onload="SVGInject(this)" />
             </li>`;
   }
@@ -41,7 +41,7 @@ class Floor {
     this.floorNumber = +floorNumber;
   }
   element() {
-    return document.querySelector(`.floor[data-number="${this.floorNumber}"]`);
+    return document.querySelector(`.floor[data-floor="${this.floorNumber}"]`);
   }
   callUp() {
     return this.waitingPassengers.findIndex(passenger => passenger.destination > this.floorNumber) > -1 ? true : false;
@@ -61,7 +61,7 @@ class Floor {
   }
   // removePassenger() {}
   render() {
-    return `<div class="floor ${this.classString()}" data-number="${this.floorNumber}">
+    return `<div class="floor ${this.classString()}" data-floor="${this.floorNumber}">
               <span class="floor-label">${numberToOrdinal(this.floorNumber)} floor</span>
               <div class="disembark-area-container">
                 <ul class="disembark-area"></ul>
@@ -222,7 +222,7 @@ class AddPassenger {
     this.destination = +destination;
   }
   render() {
-    return `<li class="passenger" data-destination="${this.destination}" draggable="true" ondragstart="dragstart_handler(event)">
+    return `<li class="passenger" data-floor="${this.destination}" draggable="true" ondragstart="dragstart_handler(event)">
               <img src="img/passenger.svg" onload="SVGInject(this)" />
             </li>`;
   }
@@ -258,7 +258,7 @@ function getTranslateY(myElement) {
 }
 
 function dragstart_handler(event) {
-  event.dataTransfer.setData('text/plain', event.target.dataset.destination);
+  event.dataTransfer.setData('text/plain', event.target.dataset.floor);
   event.dataTransfer.dropEffect = 'move';
 }
 
@@ -272,7 +272,7 @@ function dragover_handler(event) {
 function drop_handler(event) {
   event.preventDefault();
   const passengerDestination = event.dataTransfer.getData('text/plain');
-  const floorNumber = event.target.closest('.floor').dataset.number;
+  const floorNumber = event.target.closest('.floor').dataset.floor;
   if (passengerDestination != floorNumber) {
     building.floors[floorNumber].addPassenger(passengerDestination);
     building.floors[floorNumber].renderInPlace();

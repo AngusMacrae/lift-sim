@@ -75,6 +75,7 @@ body {
   max-width: 700px;
   min-height: 100vh;
   margin: 0 auto;
+  padding: 8px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -110,7 +111,7 @@ main {
   height: 40px;
   width: 40px;
   pointer-events: none;
-  fill: var(--color);
+  fill: var(--highlight-color);
 }
 
 .building {
@@ -178,12 +179,14 @@ main {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-shadow: 0 -22px 22px -22px var(--color) inset;
-          box-shadow: 0 -22px 22px -22px var(--color) inset;
+  -webkit-box-shadow: 0 -22px 22px -22px var(--highlight-color) inset;
+          box-shadow: 0 -22px 22px -22px var(--highlight-color) inset;
 }
 
 .floor .floor-label {
   position: absolute;
+  z-index: -1;
+  padding-left: 5px;
 }
 
 .floor .disembark-area-container {
@@ -223,6 +226,7 @@ main {
 .call-arrow-container {
   position: absolute;
   padding: 2px 7px;
+  z-index: -1;
 }
 
 .call-arrow-container .arrow {
@@ -243,29 +247,24 @@ main {
   fill: #333;
 }
 
-[data-destination='4'],
-[data-number='4'] {
-  --color: orange;
+[data-floor='4'] {
+  --highlight-color: orange;
 }
 
-[data-destination='3'],
-[data-number='3'] {
-  --color: blue;
+[data-floor='3'] {
+  --highlight-color: blue;
 }
 
-[data-destination='2'],
-[data-number='2'] {
-  --color: red;
+[data-floor='2'] {
+  --highlight-color: red;
 }
 
-[data-destination='1'],
-[data-number='1'] {
-  --color: green;
+[data-floor='1'] {
+  --highlight-color: green;
 }
 
-[data-destination='0'],
-[data-number='0'] {
-  --color: purple;
+[data-floor='0'] {
+  --highlight-color: purple;
 }
 
 footer {
