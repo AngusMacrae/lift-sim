@@ -18,7 +18,6 @@ class Building {
     for (let i = numberOfFloors - 1; i >= 0; i--) {
       this.floors.push(new Floor(i));
     }
-    this.lift = new Lift();
   }
   element() {
     return document.querySelector('.building');
@@ -27,7 +26,7 @@ class Building {
     return `<div class="building">
               ${this.floors.map(floor => floor.render()).join('')}
               <div class="lift-shaft">
-                ${this.lift.render()}
+                ${lift.render()}
               </div>
             </div>`;
   }
@@ -179,6 +178,7 @@ function drop_handler(event) {
   }
 }
 
+const lift = new Lift();
 const building = new Building(4);
 
 document.querySelector('#building-placeholder').outerHTML = building.render();
