@@ -97,10 +97,12 @@ class Lift {
   element() {
     return document.querySelector('.lift');
   }
-  destinationQueue() {
-    // filter callQueue for only same direction
-    return [...this.callQueue.filter(call => (call.ascending = this.ascending)), ...this.passengers.map(passenger => passenger.destination)];
+  allDestinationsQueued() {
+    return [...this.callQueue.map(call => call.origin), ...this.passengers.map(passenger => passenger.destination)];
   }
+  // destinationQueue() {
+  //   return [...this.callQueue.filter(call => (call.ascending = this.ascending)), ...this.passengers.map(passenger => passenger.destination)];
+  // }
   setLocation(newLocation) {
     this.currentLocation = newLocation;
     this.element().style.transform = `translateY(${newLocation}px)`;
@@ -130,12 +132,12 @@ class Lift {
   }
   setDirection(currentFloor) {
     if (this.ascending) {
-      let highest = Math.max(...this.callQueue.map(call => call.origin), ...this.passengers.map(passenger => passenger.destination));
+      let highest = Math.max(...this.allDestinationsQueued());
       if (highest <= currentFloor && building.floors[currentFloor].callUp() == false) {
         this.ascending = false;
       }
     } else {
-      let lowest = Math.min(...this.callQueue.map(call => call.origin), ...this.passengers.map(passenger => passenger.destination));
+      let lowest = Math.min(...this.allDestinationsQueued());
       if (lowest >= currentFloor && building.floors[currentFloor].callDown() == false) {
         this.ascending = true;
       }
