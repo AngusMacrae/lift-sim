@@ -36,21 +36,31 @@ class Building {
 }
 
 class Floor {
-  constructor(floorNumber = 0) {
+  constructor(floorNumber) {
     this.waitingPassengers = [];
     this.floorNumber = floorNumber;
   }
   element() {
     return document.querySelector(`.floor[data-number="${this.floorNumber}"]`);
   }
-  addPassenger(destination = 0) {
+  callUp() {
+    return this.waitingPassengers.findIndex(passenger => passenger.destination > this.floorNumber) > -1 ? true : false;
+  }
+  callDown() {
+    return this.waitingPassengers.findIndex(passenger => passenger.destination < this.floorNumber) > -1 ? true : false;
+  }
+  classString() {
+    let callUpClass = this.callUp() ? 'call-up' : '';
+    let callDownClass = this.callDown() ? 'call-down' : '';
+    return `${callUpClass} ${callDownClass}`;
+  }
+  addPassenger(destination) {
     this.waitingPassengers.push(new Passenger(destination));
+    lift.call(this.floorNumber);
   }
-  boardPassenger(id) {
-    this.waitingPassengers = this.waitingPassengers.filter(waitingPassenger => waitingPassenger.id != id);
-  }
+  // removePassenger() {}
   render() {
-    return `<div class="floor" data-number="${this.floorNumber}">
+    return `<div class="floor ${this.classString()}" data-number="${this.floorNumber}">
               <span class="floor-label">${numberToOrdinal(this.floorNumber)} floor</span>
               <div class="disembark-area-container">
                 <ul class="disembark-area"></ul>
@@ -76,42 +86,88 @@ class Lift {
     this.passengers = [];
     this.callQueue = [];
     this.destination = null;
-    this.currentFloor = startFloor;
-    this.capacity = 9;
+    // this.currentFloor = startFloor;
+    // this.capacity = 9;
+    this.maxSpeed = 20;
+    this.acceleration = 1;
+    this.currentSpeed = 0; // pixels per animation tick
+    this.ascending = true;
   }
   element() {
     return document.querySelector('.lift');
   }
-  // ascending() {
-  //   return this.destination > this.currentFloor;
-  // }
-  // descending() {
-  //   return this.destination < this.currentFloor;
-  // }
-  call(floor) {
-    this.callQueue.unshift(floor);
-    this.setDestination();
+  destinationQueue() {
+    return [...this.callQueue, ...this.passengers.map(passenger => passenger.destination)];
   }
-  setDestination() {
-    // set destination based on current floor, destination, callQueue and passenger destinations
+  call(newCall) {
+    let isUnique = this.callQueue.includes(newCall);
+    if (isUnique) {
+      this.callQueue.push(newCall);
+    }
+    // console.log(this);
+    // window.requestAnimationFrame(moveLift);
   }
-  exchangePassengers() {
-    this.disembarkPassengers();
-    this.embarkPassengers();
-    this.callQueue = this.callQueue.filter(floor => floor != this.currentFloor);
-    this.setDestination();
-    this.updateDOM();
+  async exchangePassengers(currentFloor) {
+    this.setDirection(currentFloor);
+    await this.disembarkPassengers(currentFloor);
+    await this.embarkPassengers(currentFloor);
+    this.setDestination(currentFloor);
+    // window.requestAnimationFrame(moveLift);
+    // return new Promise?
   }
-  disembarkPassengers() {
-    this.passengers.filter(passenger => passenger.destination != this.currentFloor);
+  setDirection(currentFloor) {
+    if (this.ascending) {
+      let highest = Math.max(this.destinationQueue());
+      if (highest <= currentFloor && building[currentFloor].callUp() == false) {
+        this.ascending = false;
+      }
+    } else {
+      let lowest = Math.min(this.destinationQueue());
+      if (lowest >= currentFloor && building[currentFloor].callDown() == false) {
+        this.ascending = true;
+      }
+    }
   }
-  embarkPassengers() {
-    building.floors[this.currentFloor].waitingPassengers.forEach(passenger => {
-      if ((passenger.destination > this.currentFloor && this.ascending()) || (passenger.destination < this.currentFloor && this.descending())) {
-        this.passengers.push(passenger);
-        building.floors[this.currentFloor].boardPassenger(passenger.id);
+  async disembarkPassengers(currentFloor) {
+    return new Promise(resolve => {
+      while (true) {
+        await delay(1000);
+        let matchingIndex = this.passengers.findIndex(passenger => passenger.destination == currentFloor);
+        if (matchingIndex == -1) resolve();
+        let disembarkingPassenger = this.passengers.splice(matchingIndex, 1);
+        this.renderInPlace();
+        // push disembarkingPassenger to disembark area
+        // rerender disembark area
+  }
+    });
+  }
+  async embarkPassengers(currentFloor) {
+    return new Promise(resolve => {
+      let matchingIndex;
+      while (true) {
+        await delay(1000);
+        if (this.ascending) {
+          matchingIndex = building.floors[currentFloor].findIndex(passenger => passenger.destination > currentFloor);
+        } else {
+          matchingIndex = building.floors[currentFloor].findIndex(passenger => passenger.destination < currentFloor);
+  }
+        if (matchingIndex == -1) {
+          resolve();
+          break;
+  }
+        let embarkingPassenger = building.floors[currentFloor].splice(matchingIndex, 1);
+        this.passengers.push(embarkingPassenger);
+        this.renderInPlace();
+        building.floors[currentFloor].renderInPlace();
       }
     });
+  }
+  setDestination(currentFloor) {
+    if (this.ascending) {
+      this.destination = Math.min(...this.destinationQueue().filter(floorNumber => floorNumber > currentFloor));
+    } else {
+      this.destination = Math.max(...this.destinationQueue().filter(floorNumber => floorNumber < currentFloor));
+    }
   }
   render() {
     return `<div class="lift">
@@ -149,6 +205,10 @@ function numberToOrdinal(inputNumber) {
     default:
       return `${inputNumber}th`;
   }
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function getTranslateY(myElement) {
