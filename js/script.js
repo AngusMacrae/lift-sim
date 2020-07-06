@@ -183,11 +183,18 @@ class Lift {
   setDestination(currentFloor) {
     this.callQueue = this.callQueue.filter(call => call.origin != currentFloor || call.ascending != this.ascending);
     if (this.ascending) {
-      // TODO: fix - these Math functions will return +/- infinity once there are no passengers remaining
-      // TODO: fix - also if the first passenger added wants to descend, these also will return infinity
+      // TODO: cleanup
+      // nearest call origin (matching current direction) or passenger destination in current direction
+      // if none then furthest call origin
       this.destination = Math.min(...this.callQueue.filter(call => call.origin > currentFloor && call.ascending == this.ascending).map(call => call.origin), ...this.passengers.filter(passenger => passenger.destination > currentFloor).map(passenger => passenger.destination));
+      if (this.destination == Infinity) {
+        this.destination = Math.max(this.callQueue.map(call => call.origin));
+      }
     } else {
       this.destination = Math.max(...this.callQueue.filter(call => call.origin < currentFloor && call.ascending == this.ascending).map(call => call.origin), ...this.passengers.filter(passenger => passenger.destination < currentFloor).map(passenger => passenger.destination));
+      if (this.destination == -Infinity) {
+        this.destination = Math.min(this.callQueue.map(call => call.origin));
+      }
     }
     console.log(this);
   }
