@@ -126,6 +126,7 @@ class Lift {
       this.setDirection(currentFloor);
       await this.disembarkPassengers(currentFloor);
       await this.embarkPassengers(currentFloor);
+      await delay(1000);
       await this.setDestination(currentFloor);
       resolve();
     });
@@ -146,12 +147,12 @@ class Lift {
   disembarkPassengers(currentFloor) {
     return new Promise(async resolve => {
       while (true) {
-        await delay(1000);
         let matchingIndex = this.passengers.findIndex(passenger => passenger.destination == currentFloor);
         if (matchingIndex == -1) {
           resolve();
           break;
         }
+        await delay(1000);
         let disembarkingPassenger = this.passengers.splice(matchingIndex, 1)[0];
         this.renderInPlace();
         // push disembarkingPassenger to building.floors[currentFloor].disembarkingPassengers
@@ -163,7 +164,6 @@ class Lift {
     return new Promise(async resolve => {
       let matchingIndex;
       while (true) {
-        await delay(1000);
         if (this.ascending) {
           matchingIndex = building.floors[currentFloor].waitingPassengers.findIndex(passenger => passenger.destination > currentFloor);
         } else {
@@ -173,6 +173,7 @@ class Lift {
           resolve();
           break;
         }
+        await delay(1000);
         let embarkingPassenger = building.floors[currentFloor].waitingPassengers.splice(matchingIndex, 1)[0];
         this.passengers.push(embarkingPassenger);
         this.renderInPlace();
