@@ -127,15 +127,19 @@ main {
   .arrow {
     width: 16px;
     fill: #ddd;
-
-    &.active {
-      fill: #333;
-    }
   }
 
   .arrow-down {
     transform: rotate(180deg);
   }
+}
+
+.call-up .arrow-up {
+  fill: #333;
+}
+
+.call-down .arrow-down {
+  fill: #333;
 }
 
 [data-destination='4'],

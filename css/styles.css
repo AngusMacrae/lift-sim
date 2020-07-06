@@ -230,13 +230,17 @@ main {
   fill: #ddd;
 }
 
-.call-arrow-container .arrow.active {
-  fill: #333;
-}
-
 .call-arrow-container .arrow-down {
   -webkit-transform: rotate(180deg);
           transform: rotate(180deg);
+}
+
+.call-up .arrow-up {
+  fill: #333;
+}
+
+.call-down .arrow-down {
+  fill: #333;
 }
 
 [data-destination='4'],
