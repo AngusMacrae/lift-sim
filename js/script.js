@@ -32,7 +32,7 @@ class Building {
   }
   renderInPlace() {
     this.element().outerHTML = this.render();
-}
+  }
 }
 
 class Floor {
@@ -78,7 +78,7 @@ class Floor {
   }
   renderInPlace() {
     this.element().outerHTML = this.render();
-}
+  }
 }
 
 class Lift {
@@ -87,16 +87,21 @@ class Lift {
     this.callQueue = [];
     this.destination = null;
     this.ascending = true;
-    // this.capacity = 9;
+    this.currentLocation = 0;
     // this.maxSpeed = 20;
     // this.acceleration = 1;
     // this.currentSpeed = 0; // pixels per animation tick
+    // this.capacity = 9;
   }
   element() {
     return document.querySelector('.lift');
   }
   destinationQueue() {
     return [...this.callQueue, ...this.passengers.map(passenger => passenger.destination)];
+  }
+  setLocation(newLocation) {
+    this.currentLocation = newLocation;
+    this.element().style.transform = `translateY(${newLocation}px)`;
   }
   call(newCall) {
     let isUnique = !this.callQueue.includes(newCall);
@@ -108,13 +113,14 @@ class Lift {
     // this.setDestination(hmmm...)
     // window.requestAnimationFrame(moveLift);
   }
-  async exchangePassengers(currentFloor) {
-    this.setDirection(currentFloor);
-    await this.disembarkPassengers(currentFloor);
-    await this.embarkPassengers(currentFloor);
-    this.setDestination(currentFloor);
-    // window.requestAnimationFrame(moveLift);
-    // return new Promise?
+  exchangePassengers(currentFloor) {
+    return new Promise(async resolve => {
+      this.setDirection(currentFloor);
+      await this.disembarkPassengers(currentFloor);
+      await this.embarkPassengers(currentFloor);
+      await this.setDestination(currentFloor);
+      resolve();
+    });
   }
   setDirection(currentFloor) {
     if (this.ascending) {
@@ -142,7 +148,7 @@ class Lift {
         this.renderInPlace();
         // push disembarkingPassenger to building.floors[currentFloor].disembarkingPassengers
         // building.floors[currentFloor].renderInPlace();
-  }
+      }
     });
   }
   embarkPassengers(currentFloor) {
@@ -154,11 +160,11 @@ class Lift {
           matchingIndex = building.floors[currentFloor].waitingPassengers.findIndex(passenger => passenger.destination > currentFloor);
         } else {
           matchingIndex = building.floors[currentFloor].waitingPassengers.findIndex(passenger => passenger.destination < currentFloor);
-  }
+        }
         if (matchingIndex == -1) {
           resolve();
           break;
-  }
+        }
         let embarkingPassenger = building.floors[currentFloor].waitingPassengers.splice(matchingIndex, 1)[0];
         this.passengers.push(embarkingPassenger);
         this.renderInPlace();
@@ -179,9 +185,9 @@ class Lift {
     console.log(this);
   }
   render() {
-    return `<div class="lift">
+    return `<div class="lift" style="transform:translateY(${this.currentLocation}px)">
               <ul class="lift-passengers">
-              ${this.passengers.map(passenger => passenger.render()).join('')}
+                ${this.passengers.map(passenger => passenger.render()).join('')}
               </ul>
             </div>`;
   }
@@ -220,6 +226,10 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function floorNumberToOffset(floorNumber) {
+  return floorNumber * -109 + 1;
+}
+
 function getTranslateY(myElement) {
   let style = window.getComputedStyle(myElement);
   let matrix = new DOMMatrix(style.transform);
@@ -243,14 +253,41 @@ function drop_handler(event) {
   const passengerDestination = event.dataTransfer.getData('text/plain');
   const floorNumber = event.target.closest('.floor').dataset.number;
   if (passengerDestination != floorNumber) {
-    const waitingArea = event.target.closest('.waiting-area');
-    building.floors[floorNumber].waitingPassengers.push(new Passenger(passengerDestination));
-    event.target.closest('.floor').outerHTML = building.floors[floorNumber].render();
+    building.floors[floorNumber].addPassenger(passengerDestination);
+    building.floors[floorNumber].renderInPlace();
+  }
+}
+
+async function moveLift(timestamp) {
+  if (start === undefined) start = timestamp;
+  const elapsed = timestamp - start;
+
+  let destinationFloor = lift.destination;
+  let currentLocation = lift.currentLocation;
+  let destinationLocation = floorNumberToOffset(destinationFloor);
+  let newLocation;
+  if (lift.ascending) {
+    newLocation = currentLocation - 1;
+  } else {
+    newLocation = currentLocation + 1;
+  }
+
+  lift.setLocation(newLocation);
+
+  if ((lift.ascending && newLocation < destinationLocation) || (!lift.ascending && newLocation > destinationLocation)) {
+    start = undefined;
+    lift.setLocation(destinationLocation);
+    await lift.exchangePassengers(destinationFloor);
+    window.requestAnimationFrame(moveLift);
+  } else {
+    window.requestAnimationFrame(moveLift);
   }
 }
 
 const lift = new Lift();
 const building = new Building(5);
+
+let start;
 
 document.querySelector('#building-placeholder').outerHTML = building.render();
 document.querySelector('#commands').innerHTML = building.floors
