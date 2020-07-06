@@ -15,7 +15,7 @@ class Passenger {
 class Building {
   constructor(numberOfFloors = 3) {
     this.floors = [];
-    for (let i = numberOfFloors - 1; i >= 0; i--) {
+    for (let i = 0; i < numberOfFloors; i++) {
       this.floors.push(new Floor(i));
     }
   }
@@ -24,7 +24,10 @@ class Building {
   }
   render() {
     return `<div class="building">
-              ${this.floors.map(floor => floor.render()).join('')}
+              ${[...this.floors]
+                .reverse()
+                .map(floor => floor.render())
+                .join('')}
               <div class="lift-shaft">
                 ${lift.render()}
               </div>
@@ -224,6 +227,8 @@ function dragstart_handler(event) {
 
 function dragover_handler(event) {
   event.preventDefault();
+  // show invalid drop effect if passenger destination is same as dragged floor
+  // also add class to floor to show visually
   event.dataTransfer.dropEffect = 'move';
 }
 
@@ -246,6 +251,3 @@ document.querySelector('#commands').innerHTML = building.floors
   .map(floor => new AddPassenger(floor.floorNumber))
   .map(addpassenger => addpassenger.render())
   .join('');
-
-let addPassengerDraggables = document.querySelectorAll('.command-palette .passenger');
-addPassengerDraggables.forEach.addEventListener('dragstart', dragstart_handler);
