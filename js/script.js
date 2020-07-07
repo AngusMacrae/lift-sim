@@ -50,9 +50,9 @@ class Floor {
     return this.waitingPassengers.findIndex(passenger => passenger.destination < this.floorNumber) > -1 ? true : false;
   }
   classString() {
-    let callUpClass = this.callUp() ? 'call-up' : '';
-    let callDownClass = this.callDown() ? 'call-down' : '';
-    return `${callUpClass} ${callDownClass}`;
+    let callUpClass = this.callUp() ? ' call-up' : '';
+    let callDownClass = this.callDown() ? ' call-down' : '';
+    return `${callUpClass}${callDownClass}`;
   }
   addPassenger(destination) {
     this.waitingPassengers.push(new Passenger(destination));
@@ -61,7 +61,7 @@ class Floor {
   }
   // removePassenger() {}
   render() {
-    return `<div class="floor ${this.classString()}" data-floor="${this.floorNumber}">
+    return `<div class="floor${this.classString()}" data-floor="${this.floorNumber}">
               <span class="floor-label">${numberToOrdinal(this.floorNumber)} floor</span>
               <div class="disembark-area-container">
                 <ul class="disembark-area"></ul>
