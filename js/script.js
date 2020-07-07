@@ -97,12 +97,9 @@ class Lift {
   element() {
     return document.querySelector('.lift');
   }
-  allDestinationsQueued() {
+  destinationQueue() {
     return [...this.callQueue.map(call => call.origin), ...this.passengers.map(passenger => passenger.destination)];
   }
-  // destinationQueue() {
-  //   return [...this.callQueue.filter(call => (call.ascending = this.ascending)), ...this.passengers.map(passenger => passenger.destination)];
-  // }
   setLocation(newLocation) {
     this.currentLocation = newLocation;
     this.element().style.transform = `translateY(${newLocation}px)`;
@@ -133,12 +130,12 @@ class Lift {
   }
   setDirection(currentFloor) {
     if (this.ascending) {
-      let highest = Math.max(...this.allDestinationsQueued());
+      let highest = Math.max(...this.destinationQueue());
       if (highest <= currentFloor && building.floors[currentFloor].callUp() == false) {
         this.ascending = false;
       }
     } else {
-      let lowest = Math.min(...this.allDestinationsQueued());
+      let lowest = Math.min(...this.destinationQueue());
       if (lowest >= currentFloor && building.floors[currentFloor].callDown() == false) {
         this.ascending = true;
       }
@@ -147,34 +144,30 @@ class Lift {
   disembarkPassengers(currentFloor) {
     return new Promise(async resolve => {
       while (true) {
-        let matchingIndex = this.passengers.findIndex(passenger => passenger.destination == currentFloor);
-        if (matchingIndex == -1) {
+        let passengerIndex = this.passengers.findIndex(passenger => passenger.destination == currentFloor);
+        if (passengerIndex == -1) {
           resolve();
           break;
         }
         await delay(1000);
-        let disembarkingPassenger = this.passengers.splice(matchingIndex, 1)[0];
-        this.renderInPlace();
+        let disembarkingPassenger = this.passengers.splice(passengerIndex, 1)[0];
         // push disembarkingPassenger to building.floors[currentFloor].disembarkingPassengers
+        this.renderInPlace();
         // building.floors[currentFloor].renderInPlace();
       }
     });
   }
   embarkPassengers(currentFloor) {
     return new Promise(async resolve => {
-      let matchingIndex;
+      let passengerIndex;
       while (true) {
-        if (this.ascending) {
-          matchingIndex = building.floors[currentFloor].waitingPassengers.findIndex(passenger => passenger.destination > currentFloor);
-        } else {
-          matchingIndex = building.floors[currentFloor].waitingPassengers.findIndex(passenger => passenger.destination < currentFloor);
-        }
-        if (matchingIndex == -1) {
+        passengerIndex = building.floors[currentFloor].waitingPassengers.findIndex(passenger => passenger.destination > currentFloor == this.ascending);
+        if (passengerIndex == -1) {
           resolve();
           break;
         }
         await delay(1000);
-        let embarkingPassenger = building.floors[currentFloor].waitingPassengers.splice(matchingIndex, 1)[0];
+        let embarkingPassenger = building.floors[currentFloor].waitingPassengers.splice(passengerIndex, 1)[0];
         this.passengers.push(embarkingPassenger);
         this.renderInPlace();
         building.floors[currentFloor].renderInPlace();
@@ -256,14 +249,8 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function floorNumberToOffset(floorNumber) {
+function floorNumberToLocation(floorNumber) {
   return floorNumber * -109 + 1;
-}
-
-function getTranslateY(myElement) {
-  let style = window.getComputedStyle(myElement);
-  let matrix = new DOMMatrix(style.transform);
-  return matrix.m42;
 }
 
 function dragstart_handler(event) {
@@ -294,7 +281,7 @@ async function moveLift(timestamp) {
 
   let destinationFloor = lift.destination;
   let currentLocation = lift.currentLocation;
-  let destinationLocation = floorNumberToOffset(destinationFloor);
+  let destinationLocation = floorNumberToLocation(destinationFloor);
   let newLocation;
   if (lift.ascending) {
     newLocation = currentLocation - 1;
@@ -304,7 +291,7 @@ async function moveLift(timestamp) {
 
   lift.setLocation(newLocation);
 
-  if ((lift.ascending && newLocation < destinationLocation) || (!lift.ascending && newLocation > destinationLocation)) {
+  if (lift.ascending == newLocation < destinationLocation) {
     start = undefined;
     lift.setLocation(destinationLocation);
     await lift.exchangePassengers(destinationFloor);
