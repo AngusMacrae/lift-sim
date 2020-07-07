@@ -110,14 +110,18 @@ class Lift {
       this.callQueue.push(newCall);
     }
     if (this.destination == null) {
+      // if lift is idle
       this.setDirection(this.currentFloor);
       this.setDestination(this.currentFloor);
       window.requestAnimationFrame(moveLift);
+    } else {
+      // if newCall is on current path
+      // and outside stopping distance
+      let currentFloorLoc = locationToFloorNumber(this.currentLocation, this.ascending);
+      if ((this.ascending && currentFloorLoc < newCall.origin) || (!this.ascending && currentFloorLoc > newCall.origin)) {
+        this.setDestination(this.currentFloor);
+      }
     }
-    // if newCall is on current path
-    // and outside stopping distance
-    // this.setDestination(hmmm...)
-    // window.requestAnimationFrame(moveLift);
   }
   exchangePassengers(currentFloor) {
     return new Promise(async resolve => {
@@ -268,6 +272,14 @@ function delay(ms) {
 
 function floorNumberToLocation(floorNumber) {
   return floorNumber * -109 + 1;
+}
+
+function locationToFloorNumber(location, ascending) {
+  if (ascending) {
+    return Math.ceil(location / -109);
+  } else {
+    return Math.floor(location / -109);
+  }
 }
 
 function dragstart_handler(event) {
