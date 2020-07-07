@@ -123,7 +123,7 @@ main {
   padding: 5px;
   z-index: 1;
   border: 1px solid #333;
-  background-color: #eee;
+  background-color: #ddd;
   position: absolute;
   left: 20%;
   top: 0;
@@ -245,27 +245,31 @@ main {
 }
 
 [data-floor='4'] {
-  --highlight-color: orange;
+  --highlight-color: #e1b298;
 }
 
 [data-floor='3'] {
-  --highlight-color: blue;
+  --highlight-color: #dad6a1;
 }
 
 [data-floor='2'] {
-  --highlight-color: red;
+  --highlight-color: #a6cea1;
 }
 
 [data-floor='1'] {
-  --highlight-color: green;
+  --highlight-color: #8bb9d4;
 }
 
 [data-floor='0'] {
-  --highlight-color: purple;
+  --highlight-color: #ae9cd6;
 }
 
 footer {
   text-align: center;
+}
+
+footer small {
+  color: #999;
 }
 
 @media (max-width: 400px) {

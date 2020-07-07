@@ -50,7 +50,7 @@ main {
   padding: 5px;
   z-index: 1;
   border: 1px solid #333;
-  background-color: #eee;
+  background-color: #ddd;
   position: absolute;
   left: $lift-shaft-location;
   top: 0;
@@ -168,6 +168,10 @@ main {
 
 footer {
   text-align: center;
+
+  small {
+    color: #999;
+  }
 }
 
 @media (max-width: 400px) {
