@@ -181,9 +181,9 @@ class Lift {
     this.callQueue = this.callQueue.filter(call => call.origin != currentFloor || call.ascending != this.ascending);
   }
   setDestination(currentFloor) {
-      // TODO: cleanup
-      // nearest call origin (matching current direction) or passenger destination in current direction
-      // if none then furthest call origin
+    // TODO: cleanup
+    // nearest call origin (matching current direction) or passenger destination in current direction
+    // if none then furthest call origin
     // approach:
     // filter callQueue for call.ascending == this.ascending
     // then map call => call.origin
@@ -197,13 +197,14 @@ class Lift {
     if (this.ascending) {
       this.destination = Math.min(...this.callQueue.filter(call => call.origin > currentFloor && call.ascending == this.ascending).map(call => call.origin), ...this.passengers.filter(passenger => passenger.destination > currentFloor).map(passenger => passenger.destination));
       if (this.destination == Infinity) {
-        this.destination = Math.max(this.callQueue.map(call => call.origin));
+        this.destination = Math.max(...this.callQueue.map(call => call.origin));
       }
     } else {
       this.destination = Math.max(...this.callQueue.filter(call => call.origin < currentFloor && call.ascending == this.ascending).map(call => call.origin), ...this.passengers.filter(passenger => passenger.destination < currentFloor).map(passenger => passenger.destination));
       if (this.destination == -Infinity) {
-        this.destination = Math.min(this.callQueue.map(call => call.origin));
+        this.destination = Math.min(...this.callQueue.map(call => call.origin));
       }
+    }
     if (this.destination == Infinity || this.destination == -Infinity) {
       this.destination = null;
     }
