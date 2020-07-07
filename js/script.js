@@ -88,6 +88,7 @@ class Lift {
     this.callQueue = [];
     this.destination = null;
     this.ascending = true;
+    this.currentFloor = 0;
     this.currentLocation = 0;
     // this.maxSpeed = 20;
     // this.acceleration = 1;
@@ -108,8 +109,9 @@ class Lift {
     if (!newCall.occursIn(this.callQueue)) {
       this.callQueue.push(newCall);
     }
-    if (this.callQueue.length == 1) {
-      this.setDestination(0);
+    if (this.destination == null) {
+      this.setDirection(this.currentFloor);
+      this.setDestination(this.currentFloor);
       window.requestAnimationFrame(moveLift);
     }
     // if newCall is on current path
@@ -119,6 +121,7 @@ class Lift {
   }
   exchangePassengers(currentFloor) {
     return new Promise(async resolve => {
+      this.currentFloor = currentFloor;
       this.setDirection(currentFloor);
       await this.disembarkPassengers(currentFloor);
       await this.embarkPassengers(currentFloor);
@@ -181,6 +184,17 @@ class Lift {
       // TODO: cleanup
       // nearest call origin (matching current direction) or passenger destination in current direction
       // if none then furthest call origin
+    // approach:
+    // filter callQueue for call.ascending == this.ascending
+    // then map call => call.origin
+    // then filter for origin >/< currentFloor depending on ascending
+    // filter this.passengers for destination >/< currentFloor
+    // then map passenger => passenger.destination
+    // find min/max
+    // if infinity, find max over whole call queue
+    // if -infinity, find min over whole call queue
+    // then, if +/- infinity, set to null
+    if (this.ascending) {
       this.destination = Math.min(...this.callQueue.filter(call => call.origin > currentFloor && call.ascending == this.ascending).map(call => call.origin), ...this.passengers.filter(passenger => passenger.destination > currentFloor).map(passenger => passenger.destination));
       if (this.destination == Infinity) {
         this.destination = Math.max(this.callQueue.map(call => call.origin));
@@ -190,6 +204,8 @@ class Lift {
       if (this.destination == -Infinity) {
         this.destination = Math.min(this.callQueue.map(call => call.origin));
       }
+    if (this.destination == Infinity || this.destination == -Infinity) {
+      this.destination = null;
     }
     console.log(this);
   }
@@ -295,7 +311,7 @@ async function moveLift(timestamp) {
     start = undefined;
     lift.setLocation(destinationLocation);
     await lift.exchangePassengers(destinationFloor);
-    if (lift.passengers.length > 0 || lift.callQueue.length > 0) {
+    if (lift.destination != null) {
       window.requestAnimationFrame(moveLift);
     }
   } else {
