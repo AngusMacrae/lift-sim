@@ -216,7 +216,7 @@ class Lift {
   }
   render() {
     return `<div class="lift" style="transform:translateY(${this.currentLocation}px)">
-              <ul class="lift-passengers">
+              <ul class="lift-passengers-container">
                 ${this.passengers.map(passenger => passenger.render()).join('')}
               </ul>
             </div>`;
