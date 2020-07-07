@@ -108,8 +108,7 @@ class Lift {
     this.element().style.transform = `translateY(${newLocation}px)`;
   }
   call(newCall) {
-    let isUnique = this.callQueue.findIndex(call => call.origin == newCall.origin && call.ascending == newCall.ascending);
-    if (isUnique == -1) {
+    if (!newCall.occursIn(this.callQueue)) {
       this.callQueue.push(newCall);
     }
     if (this.callQueue.length == 1) {
@@ -217,6 +216,13 @@ class Call {
   constructor(origin, ascending) {
     this.origin = origin;
     this.ascending = ascending;
+  }
+  occursIn(callsArray) {
+    if (callsArray.findIndex(call => call.origin == this.origin && call.ascending == this.ascending) > -1) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 
