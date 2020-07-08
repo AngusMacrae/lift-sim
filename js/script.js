@@ -252,7 +252,7 @@ class AddPassenger {
 function numberToOrdinal(inputNumber) {
   switch (inputNumber) {
     case 0:
-      return 'Ground';
+      return 'Gr.';
     case 1:
       return '1st';
     case 2:
