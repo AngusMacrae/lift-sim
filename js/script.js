@@ -83,7 +83,7 @@ class Floor {
 class Lift {
   constructor() {
     this.passengers = [];
-    this.callQueue = [];
+    this.calls = new ItemList();
     this.destination = null;
     this.ascending = true;
     this.currentFloor = 0;
@@ -97,15 +97,15 @@ class Lift {
     return document.querySelector('.lift');
   }
   destinationQueue() {
-    return [...this.callQueue.map(call => call.origin), ...this.passengers.map(passenger => passenger.destination)];
+    return [...this.calls.list.map(call => call.origin), ...this.passengers.map(passenger => passenger.destination)];
   }
   setLocation(newLocation) {
     this.currentLocation = newLocation;
     this.element().style.transform = `translateY(${newLocation}px)`;
   }
   call(newCall) {
-    if (!newCall.occursIn(this.callQueue)) {
-      this.callQueue.push(newCall);
+    if (!this.calls.contains(newCall)) {
+      this.calls.add(newCall);
     }
     if (this.destination == null) {
       // if lift is idle
@@ -179,36 +179,25 @@ class Lift {
     });
   }
   updateCallQueue(currentFloor) {
-    this.callQueue = this.callQueue.filter(call => call.origin != currentFloor || call.ascending != this.ascending);
+    this.calls.removeItem(new Call(currentFloor, this.ascending));
   }
   setDestination(currentFloor) {
-    // TODO: cleanup
-    // nearest call origin (matching current direction) or passenger destination in current direction
-    // if none then furthest call origin
-    // approach:
-    // filter callQueue for call.ascending == this.ascending
-    // then map call => call.origin
-    // then filter for origin >/< currentFloor depending on ascending
-    // filter this.passengers for destination >/< currentFloor
-    // then map passenger => passenger.destination
-    // find min/max
-    // if infinity, find max over whole call queue
-    // if -infinity, find min over whole call queue
-    // then, if +/- infinity, set to null
-    if (this.ascending) {
-      this.destination = Math.min(...this.callQueue.filter(call => call.origin > currentFloor && call.ascending == this.ascending).map(call => call.origin), ...this.passengers.filter(passenger => passenger.destination > currentFloor).map(passenger => passenger.destination));
-      if (this.destination == Infinity) {
-        this.destination = Math.max(...this.callQueue.map(call => call.origin));
-      }
-    } else {
-      this.destination = Math.max(...this.callQueue.filter(call => call.origin < currentFloor && call.ascending == this.ascending).map(call => call.origin), ...this.passengers.filter(passenger => passenger.destination < currentFloor).map(passenger => passenger.destination));
-      if (this.destination == -Infinity) {
-        this.destination = Math.min(...this.callQueue.map(call => call.origin));
-      }
+    const calls = this.calls.list;
+    const callOriginsInDirection = calls.filter(call => call.ascending == this.ascending).map(call => call.origin);
+    const passengerDestinations = this.passengers.map(passenger => passenger.destination);
+    let newDestination = Math.min(...[...callOriginsInDirection, ...passengerDestinations].filter(floor => floor > currentFloor == this.ascending));
+
+    if (newDestination == Infinity) {
+      newDestination = Math.max(...calls.map(call => call.origin));
+    } else if (newDestination == -Infinity) {
+      newDestination = Math.min(...calls.map(call => call.origin));
     }
-    if (this.destination == Infinity || this.destination == -Infinity) {
-      this.destination = null;
+
+    if (newDestination == Infinity || newDestination == -Infinity) {
+      newDestination = null;
     }
+
+    this.destination = newDestination;
     console.log(this);
   }
   render() {
@@ -223,13 +212,25 @@ class Lift {
   }
 }
 
+class ItemList {
+  constructor() {
+    this.list = [];
+  }
+  contains(newItem) {
+    return this.list.some(item => JSON.stringify(item) == JSON.stringify(newItem));
+  }
+  add(newItem) {
+    this.list.push(newItem);
+  }
+  removeItem(itemToRemove) {
+    this.list = this.list.filter(item => JSON.stringify(item) != JSON.stringify(itemToRemove));
+  }
+}
+
 class Call {
   constructor(origin, ascending) {
     this.origin = origin;
     this.ascending = ascending;
-  }
-  occursIn(callsArray) {
-    return callsArray.some(call => call.origin == this.origin && call.ascending == this.ascending);
   }
 }
 
