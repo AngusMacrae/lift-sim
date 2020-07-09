@@ -44,10 +44,10 @@ class Floor {
     return document.querySelector(`.floor[data-floor="${this.floorNumber}"]`);
   }
   callUp() {
-    return this.waitingPassengers.findIndex(passenger => passenger.destination > this.floorNumber) > -1 ? true : false;
+    return this.waitingPassengers.some(passenger => passenger.destination > this.floorNumber);
   }
   callDown() {
-    return this.waitingPassengers.findIndex(passenger => passenger.destination < this.floorNumber) > -1 ? true : false;
+    return this.waitingPassengers.some(passenger => passenger.destination < this.floorNumber);
   }
   addPassenger(destination) {
     this.waitingPassengers.push(new Passenger(destination));
@@ -230,11 +230,7 @@ class Call {
     this.ascending = ascending;
   }
   occursIn(callsArray) {
-    if (callsArray.findIndex(call => call.origin == this.origin && call.ascending == this.ascending) > -1) {
-      return true;
-    } else {
-      return false;
-    }
+    return callsArray.some(call => call.origin == this.origin && call.ascending == this.ascending);
   }
 }
 
