@@ -51,16 +51,15 @@ class Floor {
   }
   addPassenger(destination) {
     this.waitingPassengers.push(new Passenger(destination));
-    let ascending = destination > this.floorNumber ? true : false;
-    lift.call(new Call(this.floorNumber, ascending));
+    lift.call(new Call(this.floorNumber, destination > this.floorNumber));
   }
-  async boardPassenger(ascending) {
+  async embarkPassenger(ascending) {
     const passengerIndex = this.waitingPassengers.findIndex(passenger => passenger.destination > this.floorNumber == ascending);
     if (passengerIndex > -1) {
-      const boardingPassenger = this.waitingPassengers.splice(passengerIndex, 1)[0];
+      const embarkingPassenger = this.waitingPassengers.splice(passengerIndex, 1)[0];
       await delay(1000);
       this.renderInPlace();
-      return boardingPassenger;
+      return embarkingPassenger;
     } else {
       return null;
     }
@@ -115,49 +114,50 @@ class Lift {
     this.element().style.transform = `translateY(${newLocation}px)`;
   }
   call(newCall) {
+    // TODO: rework this method
     if (!this.calls.contains(newCall)) {
       this.calls.add(newCall);
     }
     if (this.destination == null) {
       // if lift is idle
-      this.setDirection(this.currentFloor);
-      this.setDestination(this.currentFloor);
+      this.calculateDirection(this.currentFloor);
+      this.calculateDestination(this.currentFloor);
       window.requestAnimationFrame(moveLift);
     } else {
       // if newCall is on current path
       // and outside stopping distance
       let currentFloorLoc = locationToFloorNumber(this.currentLocation, this.ascending);
       if ((this.ascending && currentFloorLoc < newCall.origin) || (!this.ascending && currentFloorLoc > newCall.origin)) {
-        this.setDestination(this.currentFloor);
+        this.calculateDestination(this.currentFloor);
       }
     }
   }
   exchangePassengers(currentFloor) {
     return new Promise(async resolve => {
       this.currentFloor = currentFloor;
-      this.setDirection(currentFloor); // needs currentFloorNumber and floorObj
-      await this.disembarkPassengers(currentFloor); // needs currentFloorNumber
-      await this.embarkPassengers(currentFloor); // needs currentFloorNumber and floorObj
+      this.calculateDirection(currentFloor); // needs currentFloorNumber and floorObj
+      await this.dropPassengers(currentFloor); // needs currentFloorNumber
+      await this.loadPassengers(currentFloor); // needs currentFloorNumber and floorObj
       await delay(1000);
-      this.updateCallQueue(currentFloor); // needs currentFloorNumber
-      this.setDestination(currentFloor); // needs currentFloorNumber
+      this.pruneCallQueue(currentFloor); // needs currentFloorNumber
+      this.calculateDestination(currentFloor); // needs currentFloorNumber
       resolve();
     });
   }
-  setDirection(currentFloor) {
+  calculateDirection(currentFloor) {
     if (this.ascending) {
-      let highest = Math.max(...this.destinationQueue());
-      if (highest <= currentFloor && building.floors[currentFloor].callUp() == false) {
+      const highestFloor = Math.max(...this.destinationQueue());
+      if (highestFloor <= currentFloor && building.floors[currentFloor].callUp() == false) {
         this.ascending = false;
       }
     } else {
-      let lowest = Math.min(...this.destinationQueue());
-      if (lowest >= currentFloor && building.floors[currentFloor].callDown() == false) {
+      const lowestFloor = Math.min(...this.destinationQueue());
+      if (lowestFloor >= currentFloor && building.floors[currentFloor].callDown() == false) {
         this.ascending = true;
       }
     }
   }
-  disembarkPassengers(currentFloor) {
+  dropPassengers(currentFloor) {
     return new Promise(async resolve => {
       while (true) {
         const passengerIndex = this.passengers.findIndex(passenger => passenger.destination == currentFloor);
@@ -166,32 +166,32 @@ class Lift {
           break;
         } else {
           await delay(1000);
-          const disembarkingPassenger = this.passengers.splice(passengerIndex, 1)[0];
-          // push disembarkingPassenger to building.floors[currentFloor].alightPassenger() method
+          const passengerToDrop = this.passengers.splice(passengerIndex, 1)[0];
+          // push passengerToDrop to building.floors[currentFloor].alightPassenger() method
           this.renderInPlace();
         }
       }
     });
   }
-  embarkPassengers(currentFloor) {
+  loadPassengers(currentFloor) {
     return new Promise(async resolve => {
       const floor = building.floors[currentFloor];
       while (true) {
-        const embarkingPassenger = await floor.boardPassenger(this.ascending);
-        if (!embarkingPassenger) {
+        const passengerToLoad = await floor.embarkPassenger(this.ascending);
+        if (!passengerToLoad) {
           resolve();
           break;
         } else {
-          this.passengers.push(embarkingPassenger);
+          this.passengers.push(passengerToLoad);
           this.renderInPlace();
         }
       }
     });
   }
-  updateCallQueue(currentFloor) {
+  pruneCallQueue(currentFloor) {
     this.calls.removeItem(new Call(currentFloor, this.ascending));
   }
-  setDestination(currentFloor) {
+  calculateDestination(currentFloor) {
     const calls = this.calls.list;
     const callOriginsInDirection = calls.filter(call => call.ascending == this.ascending).map(call => call.origin);
     const passengerDestinations = this.passengers.map(passenger => passenger.destination);
@@ -239,7 +239,7 @@ class ItemList {
 
 class Call {
   constructor(origin, ascending) {
-    this.origin = origin;
+    this.origin = +origin;
     this.ascending = ascending;
   }
 }
@@ -312,14 +312,12 @@ async function moveLift(timestamp) {
   if (start === undefined) start = timestamp;
   const elapsed = timestamp - start;
 
-  let destinationFloor = lift.destination;
-  let currentLocation = lift.currentLocation;
-  let destinationLocation = floorNumberToLocation(destinationFloor);
+  const destinationLocation = floorNumberToLocation(lift.destination);
   let newLocation;
   if (lift.ascending) {
-    newLocation = currentLocation - 1;
+    newLocation = lift.currentLocation - 1;
   } else {
-    newLocation = currentLocation + 1;
+    newLocation = lift.currentLocation + 1;
   }
 
   lift.setLocation(newLocation);
@@ -327,7 +325,7 @@ async function moveLift(timestamp) {
   if (lift.ascending == newLocation < destinationLocation) {
     start = undefined;
     lift.setLocation(destinationLocation);
-    await lift.exchangePassengers(destinationFloor);
+    await lift.exchangePassengers(lift.destination);
     if (lift.destination != null) {
       window.requestAnimationFrame(moveLift);
     }
