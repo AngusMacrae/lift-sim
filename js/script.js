@@ -54,6 +54,17 @@ class Floor {
     let ascending = destination > this.floorNumber ? true : false;
     lift.call(new Call(this.floorNumber, ascending));
   }
+  async boardPassenger(ascending) {
+    const passengerIndex = this.waitingPassengers.findIndex(passenger => passenger.destination > this.floorNumber == ascending);
+    if (passengerIndex > -1) {
+      const boardingPassenger = this.waitingPassengers.splice(passengerIndex, 1)[0];
+      await delay(1000);
+      this.renderInPlace();
+      return boardingPassenger;
+    } else {
+      return null;
+    }
+  }
   // removePassenger() {}
   render() {
     let classString = '';
@@ -149,32 +160,31 @@ class Lift {
   disembarkPassengers(currentFloor) {
     return new Promise(async resolve => {
       while (true) {
-        let passengerIndex = this.passengers.findIndex(passenger => passenger.destination == currentFloor);
+        const passengerIndex = this.passengers.findIndex(passenger => passenger.destination == currentFloor);
         if (passengerIndex == -1) {
           resolve();
           break;
+        } else {
+          await delay(1000);
+          const disembarkingPassenger = this.passengers.splice(passengerIndex, 1)[0];
+          // push disembarkingPassenger to building.floors[currentFloor].alightPassenger() method
+          this.renderInPlace();
         }
-        await delay(1000);
-        let disembarkingPassenger = this.passengers.splice(passengerIndex, 1)[0];
-        // push disembarkingPassenger to building.floors[currentFloor].disembarkingPassengers
-        this.renderInPlace();
-        // building.floors[currentFloor].renderInPlace();
       }
     });
   }
   embarkPassengers(currentFloor) {
     return new Promise(async resolve => {
+      const floor = building.floors[currentFloor];
       while (true) {
-        let passengerIndex = building.floors[currentFloor].waitingPassengers.findIndex(passenger => passenger.destination > currentFloor == this.ascending);
-        if (passengerIndex == -1) {
+        const embarkingPassenger = await floor.boardPassenger(this.ascending);
+        if (!embarkingPassenger) {
           resolve();
           break;
+        } else {
+          this.passengers.push(embarkingPassenger);
+          this.renderInPlace();
         }
-        await delay(1000);
-        let embarkingPassenger = building.floors[currentFloor].waitingPassengers.splice(passengerIndex, 1)[0];
-        this.passengers.push(embarkingPassenger);
-        this.renderInPlace();
-        building.floors[currentFloor].renderInPlace();
       }
     });
   }
