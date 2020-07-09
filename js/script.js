@@ -124,12 +124,12 @@ class Lift {
   exchangePassengers(currentFloor) {
     return new Promise(async resolve => {
       this.currentFloor = currentFloor;
-      this.setDirection(currentFloor);
-      await this.disembarkPassengers(currentFloor);
-      await this.embarkPassengers(currentFloor);
+      this.setDirection(currentFloor); // needs currentFloorNumber and floorObj
+      await this.disembarkPassengers(currentFloor); // needs currentFloorNumber
+      await this.embarkPassengers(currentFloor); // needs currentFloorNumber and floorObj
       await delay(1000);
-      this.updateCallQueue(currentFloor);
-      this.setDestination(currentFloor);
+      this.updateCallQueue(currentFloor); // needs currentFloorNumber
+      this.setDestination(currentFloor); // needs currentFloorNumber
       resolve();
     });
   }
@@ -164,9 +164,8 @@ class Lift {
   }
   embarkPassengers(currentFloor) {
     return new Promise(async resolve => {
-      let passengerIndex;
       while (true) {
-        passengerIndex = building.floors[currentFloor].waitingPassengers.findIndex(passenger => passenger.destination > currentFloor == this.ascending);
+        let passengerIndex = building.floors[currentFloor].waitingPassengers.findIndex(passenger => passenger.destination > currentFloor == this.ascending);
         if (passengerIndex == -1) {
           resolve();
           break;
@@ -234,7 +233,7 @@ class Call {
   }
 }
 
-class AddPassenger {
+class AddPassengerDraggable {
   constructor(destination) {
     this.destination = +destination;
   }
@@ -333,6 +332,6 @@ let start;
 
 document.querySelector('#building-placeholder').outerHTML = building.render();
 document.querySelector('#commands').innerHTML = building.floors
-  .map(floor => new AddPassenger(floor.floorNumber))
-  .map(addpassenger => addpassenger.render())
+  .map(floor => new AddPassengerDraggable(floor.floorNumber))
+  .map(draggable => draggable.render())
   .join('');
