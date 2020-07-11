@@ -16,7 +16,7 @@ class Building {
       this.floors.push(new Floor(i));
     }
   }
-  element() {
+  get element() {
     return document.querySelector('.building');
   }
   render() {
@@ -31,7 +31,7 @@ class Building {
             </div>`;
   }
   renderInPlace() {
-    this.element().outerHTML = this.render();
+    this.element.outerHTML = this.render();
   }
 }
 
@@ -40,14 +40,14 @@ class Floor {
     this.waitingPassengers = [];
     this.floorNumber = +floorNumber;
   }
-  element() {
+  get element() {
     return document.querySelector(`.floor[data-floor="${this.floorNumber}"]`);
   }
-  callUp() {
-    return this.waitingPassengers.some(passenger => passenger.destination > this.floorNumber);
-  }
-  callDown() {
-    return this.waitingPassengers.some(passenger => passenger.destination < this.floorNumber);
+  get calling() {
+    return {
+      up: this.waitingPassengers.some(passenger => passenger.destination > this.floorNumber),
+      down: this.waitingPassengers.some(passenger => passenger.destination < this.floorNumber),
+    };
   }
   addPassenger(destination) {
     this.waitingPassengers.push(new Passenger(destination));
@@ -67,8 +67,8 @@ class Floor {
   // removePassenger() {}
   render() {
     let classString = '';
-    classString += this.callUp() ? ' call-up' : '';
-    classString += this.callDown() ? ' call-down' : '';
+    classString += this.calling.up ? ' call-up' : '';
+    classString += this.calling.down ? ' call-down' : '';
     return `<div class="floor${classString}" data-floor="${this.floorNumber}">
               <span class="floor-label">${numberToOrdinal(this.floorNumber)} floor</span>
               <div class="disembark-area-container">
@@ -86,7 +86,7 @@ class Floor {
             </div>`;
   }
   renderInPlace() {
-    this.element().outerHTML = this.render();
+    this.element.outerHTML = this.render();
   }
 }
 
@@ -103,15 +103,15 @@ class Lift {
     // this.currentSpeed = 0; // pixels per animation tick
     // this.capacity = 9;
   }
-  element() {
+  get element() {
     return document.querySelector('.lift');
   }
-  destinationQueue() {
+  get destinationQueue() {
     return [...this.calls.list.map(call => call.origin), ...this.passengers.map(passenger => passenger.destination)];
   }
   setLocation(newLocation) {
     this.currentLocation = newLocation;
-    this.element().style.transform = `translateY(${newLocation}px)`;
+    this.element.style.transform = `translateY(${newLocation}px)`;
   }
   call(newCall) {
     // TODO: rework this method
@@ -146,13 +146,13 @@ class Lift {
   }
   calculateDirection(currentFloor) {
     if (this.ascending) {
-      const highestFloor = Math.max(...this.destinationQueue());
-      if (highestFloor <= currentFloor && building.floors[currentFloor].callUp() == false) {
+      const highestFloor = Math.max(...this.destinationQueue);
+      if (highestFloor <= currentFloor && building.floors[currentFloor].calling.up == false) {
         this.ascending = false;
       }
     } else {
-      const lowestFloor = Math.min(...this.destinationQueue());
-      if (lowestFloor >= currentFloor && building.floors[currentFloor].callDown() == false) {
+      const lowestFloor = Math.min(...this.destinationQueue);
+      if (lowestFloor >= currentFloor && building.floors[currentFloor].calling.down == false) {
         this.ascending = true;
       }
     }
@@ -218,7 +218,7 @@ class Lift {
             </div>`;
   }
   renderInPlace() {
-    this.element().outerHTML = this.render();
+    this.element.outerHTML = this.render();
   }
 }
 
