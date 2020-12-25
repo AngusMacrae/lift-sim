@@ -1,12 +1,11 @@
-import PassengerContainer from './PassengerContainer';
+import PassengerContainer from './PassengerContainer.js';
 
 export default class DisembarkArea extends PassengerContainer {
   constructor() {
     super();
   }
-  get element() {}
   render() {
-    return `<div class="disembark-area-container">
+    return `<div data-id="${this.id}" class="disembark-area-container">
               <ul class="disembark-area"></ul>
             </div>`;
   }

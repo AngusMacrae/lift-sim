@@ -1,4 +1,4 @@
-import PassengerContainer from './PassengerContainer';
+import PassengerContainer from './PassengerContainer.js';
 
 export default class LiftCompartment extends PassengerContainer {
   constructor() {

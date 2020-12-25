@@ -1,5 +1,5 @@
-import PassengerContainer from './PassengerContainer';
-import LiftCompartment from './LiftCompartment';
+import PassengerContainer from './PassengerContainer.js';
+import LiftCompartment from './LiftCompartment.js';
 // import floorNumberToLocation
 
 export default class Lift extends PassengerContainer {
@@ -10,9 +10,6 @@ export default class Lift extends PassengerContainer {
     // this.acceleration = 1;
     // this.currentSpeed = 0; // pixels per animation tick
     // this.capacity = 9;
-  }
-  get element() {
-    return document.querySelector('.lift');
   }
   setLocation(newLocation) {
     this.currentLocation = newLocation;
@@ -44,7 +41,7 @@ export default class Lift extends PassengerContainer {
     }
   };
   render() {
-    return `<div class="lift" style="transform:translateY(${this.currentLocation}px)">
+    return `<div data-id="${this.id}" class="lift" style="transform:translateY(${this.currentLocation}px)">
               ${this.compartment.render()}
             </div>`;
   }

@@ -9,3 +9,5 @@ function locationToFloorNumber(location, ascending) {
     return Math.floor(location / -109);
   }
 }
+
+export { floorNumberToLocation, locationToFloorNumber };

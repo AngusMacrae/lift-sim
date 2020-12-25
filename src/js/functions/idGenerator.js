@@ -5,4 +5,6 @@ function* idGenerator() {
   }
 }
 
-export default componentId = idGenerator();
+const componentId = idGenerator();
+
+export default componentId;

@@ -1,22 +1,20 @@
-import Lift from './Lift';
-import Floor from './Floor';
-import delay from '../functions/delay';
+import DynamicElement from './DynamicElement.js';
+import Lift from './Lift.js';
+import Floor from './Floor.js';
+import delay from '../functions/delay.js';
 
-export default class Building {
+export default class Building extends DynamicElement {
   constructor(numberOfFloors) {
+    super();
     this.lift = new Lift();
     this.floors = [];
     for (let i = 0; i < numberOfFloors; i++) {
       this.floors.push(new Floor(i));
     }
   }
-  get element() {
-    return document.querySelector('.building');
-  }
   get calls() {
     return this.floors.map(floor => floor.calling);
   }
-
   get destinationQueue() {
     return [...this.calls.list.map(call => call.origin), ...this.passengers.map(passenger => passenger.destination)];
   }
@@ -79,6 +77,7 @@ export default class Building {
   loadPassengers(currentFloor) {
     return new Promise(async resolve => {
       const floor = building.floors[currentFloor];
+      // building???
       while (true) {
         const passengerToLoad = await floor.embarkPassenger(this.ascending);
         if (!passengerToLoad) {
@@ -115,7 +114,7 @@ export default class Building {
   }
 
   render() {
-    return `<div class="building">
+    return `<div data-id="${this.id}" class="building">
               ${[...this.floors]
                 .reverse()
                 .map(floor => floor.render())
