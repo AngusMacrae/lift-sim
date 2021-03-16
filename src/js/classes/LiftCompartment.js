@@ -5,7 +5,7 @@ export default class LiftCompartment extends PassengerContainer {
     super();
   }
   render() {
-    return `<ul class="lift-passengers-container">
+    return `<ul data-id="${this.id}" class="lift-passengers-container">
               ${this.passengers.map(passenger => passenger.render()).join('')}
             </ul>`;
   }

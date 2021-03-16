@@ -6,7 +6,9 @@ export default class DisembarkArea extends PassengerContainer {
   }
   render() {
     return `<div data-id="${this.id}" class="disembark-area-container">
-              <ul class="disembark-area"></ul>
+              <ul class="disembark-area">
+                ${this.passengers.map(passenger => passenger.render()).join('')}
+              </ul>
             </div>`;
   }
 }

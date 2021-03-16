@@ -6,8 +6,7 @@ export default class PassengerContainer extends DynamicElement {
     super();
     this.passengers = [];
   }
-  async takePassenger(callback) {
-    // callback: passenger => passenger.destination > this.floorNumber == ascending
+  async removePassenger(callback) {
     const index = this.passengers.findIndex(callback);
     if (index > -1) {
       await delay(1000);
@@ -18,7 +17,7 @@ export default class PassengerContainer extends DynamicElement {
       return null;
     }
   }
-  givePassenger(passenger) {
+  addPassenger(passenger) {
     this.passengers.push(passenger);
     this.renderInPlace();
   }
