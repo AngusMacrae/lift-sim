@@ -10,7 +10,7 @@ export default class AddPassengerDraggable extends DynamicElement {
     this.element.addEventListener('dragstart', event => dragstart_handler(event));
   }
   render() {
-    return `<li class="passenger" data-floor="${this.destination}" draggable="true">
+    return `<li data-id="${this.id}" class="passenger" data-floor="${this.destination}" draggable="true">
               <img src="img/passenger.svg" onload="SVGInject(this)" />
             </li>`;
   }
