@@ -1,5 +1,5 @@
-import Building from './classes/Building.js';
-import CommandPalette from './classes/CommandPalette.js';
+import Building from './components/Building.js';
+import CommandPalette from './components/CommandPalette.js';
 
 const NUM_FLOORS = 5;
 
