@@ -1,7 +1,6 @@
 import PassengerContainer from './PassengerContainer.js';
 import LiftCompartment from './LiftCompartment.js';
 import { floorNumberToLocation, locationToFloorNumber } from '../functions/locationTransforms.js';
-// import delay from '../functions/delay.js';
 
 export default class Lift extends PassengerContainer {
   constructor() {
@@ -31,12 +30,12 @@ export default class Lift extends PassengerContainer {
     this.element.style.transform = `translateY(-${this.location}px)`;
   }
   async goToFloor(floorNum) {
-    const targetLoc = floorNumberToLocation(floorNum);
-    const start = 0;
+    const targetLocation = floorNumberToLocation(floorNum);
+    let start = 0;
     return new Promise(resolve => {
-      const runAnimation = timestamp => {
-        const inMotion = this.ascending ? this.location < targetLoc : this.location > targetLoc;
-        if (inMotion) {
+      const animateMovement = timestamp => {
+        const arrivedAtTarget = this.ascending ? this.location > targetLocation : this.location < targetLocation;
+        if (!arrivedAtTarget) {
           if (start === undefined) start = timestamp;
           const elapsed = timestamp - start;
           if (this.ascending) {
@@ -44,13 +43,13 @@ export default class Lift extends PassengerContainer {
           } else {
             this.move(-1);
           }
-          window.requestAnimationFrame(runAnimation);
+          window.requestAnimationFrame(animateMovement);
         } else {
           resolve();
         }
       };
 
-      window.requestAnimationFrame(runAnimation);
+      window.requestAnimationFrame(animateMovement);
     });
   }
   render() {
