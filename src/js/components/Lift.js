@@ -26,7 +26,7 @@ export default class Lift extends PassengerContainer {
     return locationToFloorNumber(this.location, this.ascending);
   }
   get stoppingDistance() {
-    return this.currentSpeed ** 2 / (2 * this.acceleration) - 1;
+    return this.currentSpeed ** 2 / (2 * this.acceleration) + 1;
   }
   setLocation(newLocation) {
     this.location = newLocation;

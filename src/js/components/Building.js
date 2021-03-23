@@ -12,13 +12,23 @@ export default class Building extends DynamicElement {
       this.floors.push(new Floor(i));
     }
   }
-  get nextAscendingCall() {
+  get nextAscendingStop() {
     const floorsOnPath = this.floors.filter(floor => floor.floorNumber > this.lift.currentFloor);
     const floor = floorsOnPath.find(floor => floor.calling.up || this.lift.passengerDestinations.includes(floor.floorNumber));
     return floor ? floor.floorNumber : null;
   }
-  get nextDescendingCall() {
+  get nextDescendingStop() {
     const floorsOnPath = [...this.floors.filter(floor => floor.floorNumber < this.lift.currentFloor)].reverse();
+    const floor = floorsOnPath.find(floor => floor.calling.down || this.lift.passengerDestinations.includes(floor.floorNumber));
+    return floor ? floor.floorNumber : null;
+  }
+  get nextAscendingStopInclusive() {
+    const floorsOnPath = this.floors.filter(floor => floor.floorNumber >= this.lift.currentFloor);
+    const floor = floorsOnPath.find(floor => floor.calling.up || this.lift.passengerDestinations.includes(floor.floorNumber));
+    return floor ? floor.floorNumber : null;
+  }
+  get nextDescendingStopInclusive() {
+    const floorsOnPath = [...this.floors.filter(floor => floor.floorNumber <= this.lift.currentFloor)].reverse();
     const floor = floorsOnPath.find(floor => floor.calling.down || this.lift.passengerDestinations.includes(floor.floorNumber));
     return floor ? floor.floorNumber : null;
   }
@@ -32,40 +42,57 @@ export default class Building extends DynamicElement {
     const floor = allFloors.find(floor => floor.calling.down);
     return floor ? floor.floorNumber : null;
   }
-  async summonLift() {
-    if (this.lift.status === 'idle') {
-      this.cycleLift();
+  async summonLift(floorNum) {
+    if (this.lift.status !== 'idle') return;
+
+    if (floorNum > this.lift.currentFloor) {
+      this.lift.status = 'ascending';
+    } else if (floorNum < this.lift.currentFloor) {
+      this.lift.status = 'descending';
+    } else {
+      this.lift.status = this.floors[floorNum].waitingArea.passengers[0].destination > this.lift.currentFloor ? 'ascending' : 'descending';
+    }
+    await this.cycleLift();
+    this.lift.status = 'idle';
+    // console.log(this.lift.status);
+  }
+  setLiftStatus() {
+    if (this.lift.status === 'ascending') {
+      if (this.nextAscendingStopInclusive) return;
+      if (this.highestDescendingCall > this.lift.currentFloor) return;
+      this.lift.status = 'descending';
+    } else if (this.lift.status === 'descending') {
+      if (this.nextDescendingStopInclusive) return;
+      if (this.lowestAscendingCall < this.lift.currentFloor) return;
+      this.lift.status = 'ascending';
+    }
+  }
+  determineNextLiftStop() {
+    if (this.lift.status === 'ascending') {
+      return this.nextAscendingStop ?? this.highestDescendingCall;
+    } else if (this.lift.status === 'descending') {
+      return this.nextDescendingStop ?? this.lowestAscendingCall;
+    } else if (this.lift.status === 'idle') {
+      return this.lowestAscendingCall ?? this.highestDescendingCall;
     }
   }
   async cycleLift() {
-    let nextStop;
-    if (this.lift.status === 'ascending') {
-      nextStop = this.nextAscendingCall ?? this.highestDescendingCall;
-    } else if (this.lift.status === 'descending') {
-      nextStop = this.nextDescendingCall ?? this.lowestAscendingCall;
-    } else if (this.lift.status === 'idle') {
-      nextStop = this.lowestAscendingCall ?? this.highestDescendingCall;
-    }
-    if (nextStop === this.lift.currentFloor) {
-      await this.exchangePassengers();
-      nextStop = this.lift.passengerDestinations[0];
-      this.lift.status = nextStop > this.lift.currentFloor ? 'ascending' : 'descending';
-      await this.lift.goToFloor(nextStop);
-      await this.exchangePassengers();
-      this.cycleLift();
-    } else if (nextStop !== null) {
-      this.lift.status = nextStop > this.lift.currentFloor ? 'ascending' : 'descending';
-      await this.lift.goToFloor(nextStop);
-      await this.exchangePassengers();
-      this.cycleLift();
+    await this.embarkPassengers();
+    this.setLiftStatus();
+    const nextStop = this.determineNextLiftStop();
+    if (nextStop === null) {
+      this.lift.status = 'idle';
     } else {
-      this.lift.status === 'idle';
+      await this.lift.goToFloor(nextStop);
+      await this.disembarkPassengers();
+      this.setLiftStatus();
+      await this.cycleLift();
     }
   }
-  async exchangePassengers() {
+  async disembarkPassengers() {
     const currentFloorNum = this.lift.currentFloor;
     const currentFloor = this.floors[currentFloorNum];
-    let callback, disembarkingPassenger, embarkingPassenger, firstInQueue;
+    let callback, disembarkingPassenger;
 
     callback = passenger => passenger.destination === currentFloorNum;
     while (true) {
@@ -76,14 +103,17 @@ export default class Building extends DynamicElement {
         break;
       }
     }
+  }
+  async embarkPassengers() {
+    const currentFloorNum = this.lift.currentFloor;
+    const currentFloor = this.floors[currentFloorNum];
+    let callback, embarkingPassenger;
+    // console.log(this.lift.status);
 
     if (this.lift.status === 'ascending') {
       callback = passenger => passenger.destination > currentFloorNum;
     } else if (this.lift.status === 'descending') {
       callback = passenger => passenger.destination < currentFloorNum;
-    } else if (this.lift.status === 'idle') {
-      firstInQueue = currentFloor.waitingArea.passengers[0].destination;
-      callback = passenger => passenger.destination > currentFloorNum === firstInQueue > currentFloorNum;
     }
     while (true) {
       embarkingPassenger = await currentFloor.waitingArea.removePassenger(callback);
@@ -93,7 +123,6 @@ export default class Building extends DynamicElement {
         break;
       }
     }
-
     await delay(1000);
   }
   render() {
