@@ -8,9 +8,9 @@ export default class Lift extends PassengerContainer {
     this.compartment = new LiftCompartment();
     this.status = 'idle'; // idle, ascending, descending
     this.location = 0;
-    // this.maxSpeed = 20;
-    // this.acceleration = 1;
-    // this.currentSpeed = 0; // pixels per animation tick
+    this.maxSpeed = 10; // px/ms
+    this.acceleration = 0.1; // px/ms^2
+    this.currentSpeed = 0; // px/ms
     // this.capacity = 9;
   }
   get ascending() {
@@ -25,26 +25,37 @@ export default class Lift extends PassengerContainer {
   get currentFloor() {
     return locationToFloorNumber(this.location, this.ascending);
   }
-  move(step) {
-    this.location += step;
+  get stoppingDistance() {
+    return this.currentSpeed ** 2 / (2 * this.acceleration) - 1;
+  }
+  setLocation(newLocation) {
+    this.location = newLocation;
     this.element.style.transform = `translateY(-${this.location}px)`;
   }
   async goToFloor(floorNum) {
     const targetLocation = floorNumberToLocation(floorNum);
-    let start = 0;
+    let start;
     return new Promise(resolve => {
       const animateMovement = timestamp => {
         const arrivedAtTarget = this.ascending ? this.location > targetLocation : this.location < targetLocation;
         if (!arrivedAtTarget) {
-          if (start === undefined) start = timestamp;
-          const elapsed = timestamp - start;
-          if (this.ascending) {
-            this.move(1);
+          const distanceToTarget = Math.abs(targetLocation - this.location);
+          if (distanceToTarget > this.stoppingDistance) {
+            this.currentSpeed = Math.min(this.maxSpeed, this.currentSpeed + this.acceleration);
           } else {
-            this.move(-1);
+            this.currentSpeed -= this.acceleration;
+          }
+          if (start === undefined) start = timestamp;
+          const elapsedTime = timestamp - start;
+          if (this.ascending) {
+            this.setLocation(this.location + this.currentSpeed);
+          } else {
+            this.setLocation(this.location - this.currentSpeed);
           }
           window.requestAnimationFrame(animateMovement);
         } else {
+          this.currentSpeed = 0;
+          this.setLocation(targetLocation);
           resolve();
         }
       };

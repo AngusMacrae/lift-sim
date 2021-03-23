@@ -1,12 +1,12 @@
 function floorNumberToLocation(floorNumber) {
-  return floorNumber * 108 + 1;
+  return floorNumber * 108;
 }
 
 function locationToFloorNumber(location, ascending) {
   if (ascending) {
-    return Math.ceil(location / 108) - 1;
-  } else {
     return Math.floor(location / 108);
+  } else {
+    return Math.ceil(location / 108);
   }
 }
 
