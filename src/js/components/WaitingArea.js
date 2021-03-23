@@ -16,6 +16,7 @@ export default class WaitingArea extends PassengerContainer {
   }
   newPassenger(destination) {
     this.passengers.push(new Passenger(destination));
+    this.renderInPlace();
     building.summonLift();
   }
   initialiseEventListeners() {

@@ -22,7 +22,6 @@ function drop_handler(event) {
   const floorNumber = event.target.closest('.floor').dataset.floor;
   if (passengerDestination != floorNumber) {
     building.floors[floorNumber].waitingArea.newPassenger(passengerDestination);
-    building.floors[floorNumber].waitingArea.renderInPlace();
   }
 }
 
