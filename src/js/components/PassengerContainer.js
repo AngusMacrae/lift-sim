@@ -6,8 +6,8 @@ export default class PassengerContainer extends DynamicElement {
     super();
     this.passengers = [];
   }
-  async removePassenger(callback) {
-    const index = this.passengers.findIndex(callback);
+  async removePassenger(criteria) {
+    const index = this.passengers.findIndex(criteria);
 
     if (index === -1) return null;
 

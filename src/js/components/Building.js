@@ -2,6 +2,7 @@ import DynamicElement from './DynamicElement.js';
 import Lift from './Lift.js';
 import Floor from './Floor.js';
 import delay from '../functions/delay.js';
+import transferPassengers from '../functions/transferPassengers.js';
 
 export default class Building extends DynamicElement {
   constructor(numberOfFloors) {
@@ -74,6 +75,7 @@ export default class Building extends DynamicElement {
   async cycleLift(floorNum) {
     this.setLiftDirection(floorNum);
     await this.embarkPassengers();
+    await delay(1000);
     if (this.nextStop === null) {
       this.lift.direction = 'idle';
     } else {
@@ -83,40 +85,17 @@ export default class Building extends DynamicElement {
     }
   }
   async disembarkPassengers() {
-    const currentFloorNum = this.lift.currentFloor;
-    const currentFloor = this.floors[currentFloorNum];
-    let callback, disembarkingPassenger;
-
-    callback = passenger => passenger.destination === currentFloorNum;
-    while (true) {
-      disembarkingPassenger = await this.lift.compartment.removePassenger(callback);
-      if (disembarkingPassenger) {
-        currentFloor.disembarkArea.addPassenger(disembarkingPassenger);
-      } else {
-        break;
-      }
-    }
+    const criteria = passenger => passenger.destination === this.lift.currentFloor;
+    await transferPassengers(this.lift.compartment, this.floors[this.lift.currentFloor].disembarkArea, criteria);
   }
   async embarkPassengers() {
-    const currentFloorNum = this.lift.currentFloor;
-    const currentFloor = this.floors[currentFloorNum];
-    let callback, embarkingPassenger;
-    // console.log(this.lift.status);
-
+    let criteria;
     if (this.lift.isAscending) {
-      callback = passenger => passenger.destination > currentFloorNum;
+      criteria = passenger => passenger.destination > this.lift.currentFloor;
     } else {
-      callback = passenger => passenger.destination < currentFloorNum;
+      criteria = passenger => passenger.destination < this.lift.currentFloor;
     }
-    while (true) {
-      embarkingPassenger = await currentFloor.waitingArea.removePassenger(callback);
-      if (embarkingPassenger) {
-        this.lift.compartment.addPassenger(embarkingPassenger);
-      } else {
-        break;
-      }
-    }
-    await delay(1000);
+    await transferPassengers(this.floors[this.lift.currentFloor].waitingArea, this.lift.compartment, criteria);
   }
   render() {
     return `<div data-id="${this.id}" class="building">
