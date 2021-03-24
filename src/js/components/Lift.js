@@ -6,24 +6,27 @@ export default class Lift extends PassengerContainer {
   constructor() {
     super();
     this.compartment = new LiftCompartment();
-    this.status = 'idle'; // idle, ascending, descending
+    this.direction = 'idle'; // idle, ascending, descending
     this._location = 0;
     this.maxSpeed = 0.3; // px/ms
     this.acceleration = 0.0005; // px/ms^2
     this.currentSpeed = 0; // px/ms
     // this.capacity = 9;
   }
-  get ascending() {
-    return this.status === 'ascending';
+  get isAscending() {
+    return this.direction === 'ascending';
   }
-  get descending() {
-    return this.status === 'descending';
+  get isDescending() {
+    return this.direction === 'descending';
+  }
+  get isIdle() {
+    return this.direction === 'idle';
   }
   get passengerDestinations() {
     return [...new Set(this.compartment.passengers.map(passenger => passenger.destination))];
   }
   get currentFloor() {
-    return locationToFloorNumber(this.location, this.ascending);
+    return locationToFloorNumber(this.location, this.isAscending);
   }
   get stoppingDistance() {
     return this.currentSpeed ** 2 / (2 * this.acceleration);
@@ -40,7 +43,7 @@ export default class Lift extends PassengerContainer {
     let lastTimestamp;
     return new Promise(resolve => {
       const animateMovement = currentTimestamp => {
-        const arrivedAtTarget = this.ascending ? this.location > targetLocation : this.location < targetLocation;
+        const arrivedAtTarget = this.isAscending ? this.location > targetLocation : this.location < targetLocation;
         if (!arrivedAtTarget) {
           if (lastTimestamp === undefined) lastTimestamp = currentTimestamp;
           const frameTime = currentTimestamp - lastTimestamp;
@@ -51,7 +54,7 @@ export default class Lift extends PassengerContainer {
             this.currentSpeed -= this.acceleration * frameTime;
           }
           // console.log(this.currentSpeed.toFixed(3));
-          if (this.ascending) {
+          if (this.isAscending) {
             this.location += this.currentSpeed * frameTime;
           } else {
             this.location -= this.currentSpeed * frameTime;

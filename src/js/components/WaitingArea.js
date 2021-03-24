@@ -10,8 +10,8 @@ export default class WaitingArea extends PassengerContainer {
   }
   getCallingStatus() {
     return {
-      up: this.passengers.some(passenger => passenger.destination > this.floorNumber),
-      down: this.passengers.some(passenger => passenger.destination < this.floorNumber),
+      ascending: this.passengers.some(passenger => passenger.destination > this.floorNumber),
+      descending: this.passengers.some(passenger => passenger.destination < this.floorNumber),
     };
   }
   newPassenger(destination) {
@@ -25,8 +25,8 @@ export default class WaitingArea extends PassengerContainer {
   }
   render() {
     let classString = '';
-    classString += this.getCallingStatus().up ? ' call-up' : '';
-    classString += this.getCallingStatus().down ? ' call-down' : '';
+    classString += this.getCallingStatus().ascending ? ' call-up' : '';
+    classString += this.getCallingStatus().descending ? ' call-down' : '';
     return `<div data-id="${this.id}" class="waiting-area-container${classString}">
               <div class="call-arrow-container">
                 <img class="arrow arrow-up" src="img/up-arrow.svg" onload="SVGInject(this)" />
