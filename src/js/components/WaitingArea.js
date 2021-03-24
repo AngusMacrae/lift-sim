@@ -8,16 +8,16 @@ export default class WaitingArea extends PassengerContainer {
     super();
     this.floorNumber = floorNum;
   }
+  newPassenger(destination) {
+    this.passengers.push(new Passenger(destination));
+    this.renderInPlace();
+    building.summonLift();
+  }
   get callingUp() {
     return this.passengers.some(passenger => passenger.destination > this.floorNumber);
   }
   get callingDown() {
     return this.passengers.some(passenger => passenger.destination < this.floorNumber);
-  }
-  newPassenger(destination) {
-    this.passengers.push(new Passenger(destination));
-    this.renderInPlace();
-    building.summonLift();
   }
   initialiseEventListeners() {
     this.element.querySelector('.waiting-area').addEventListener('dragover', event => dragover_handler(event));

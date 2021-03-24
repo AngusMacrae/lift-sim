@@ -13,6 +13,51 @@ export default class Building extends DynamicElement {
       this.floors.push(new Floor(i));
     }
   }
+  async summonLift() {
+    if (!this.lift.isIdle) return;
+    await this.cycleLift();
+    this.lift.direction = null;
+  }
+  async cycleLift() {
+    this.lift.direction = this.nextLiftDirection;
+    await this.embarkPassengers();
+    if (this.nextStop !== null) {
+      await delay(1000);
+      await this.lift.goToFloor(this.nextStop);
+      await this.disembarkPassengers();
+      await this.cycleLift();
+    }
+  }
+  async disembarkPassengers() {
+    const criteria = passenger => passenger.destination === this.lift.currentFloor;
+    await transferPassengers(this.lift.compartment, this.floors[this.lift.currentFloor].disembarkArea, criteria);
+  }
+  async embarkPassengers() {
+    const criteria = passenger => passenger.destination > this.lift.currentFloor === this.lift.isAscending;
+    await transferPassengers(this.floors[this.lift.currentFloor].waitingArea, this.lift.compartment, criteria);
+  }
+  get nextLiftDirection() {
+    if (this.lift.isAscending) {
+      if (this.nextAscendingStopInclusive !== null) return 'ascending';
+      if (this.highestDescendingCall > this.lift.currentFloor) return 'ascending';
+      return 'descending';
+    }
+    if (this.lift.isDescending) {
+      if (this.nextDescendingStopInclusive !== null) return 'descending';
+      if (this.lowestAscendingCall < this.lift.currentFloor) return 'descending';
+      return 'ascending';
+    }
+    if (this.nextStop === this.lift.currentFloor) {
+      return this.floors[this.lift.currentFloor].calling.ascending ? 'ascending' : 'descending';
+    } else {
+      return this.nextStop > this.lift.currentFloor ? 'ascending' : 'descending';
+    }
+  }
+  get nextStop() {
+    if (this.lift.isAscending) return this.nextAscendingStopExclusive ?? this.highestDescendingCall;
+    if (this.lift.isDescending) return this.nextDescendingStopExclusive ?? this.lowestAscendingCall;
+    return this.lowestAscendingCall ?? this.highestDescendingCall;
+  }
   get lowestAscendingCall() {
     const floor = this.floors.find(floor => floor.calling.ascending);
     return floor ? floor.floorNumber : null;
@@ -40,51 +85,6 @@ export default class Building extends DynamicElement {
   nextStopOnPath(floorsOnPath, direction) {
     const floor = floorsOnPath.find(floor => floor.calling[direction] || this.lift.passengerDestinations.includes(floor.floorNumber));
     return floor ? floor.floorNumber : null;
-  }
-  get nextLiftDirection() {
-    if (this.lift.isAscending) {
-      if (this.nextAscendingStopInclusive !== null) return 'ascending';
-      if (this.highestDescendingCall > this.lift.currentFloor) return 'ascending';
-      return 'descending';
-    }
-    if (this.lift.isDescending) {
-      if (this.nextDescendingStopInclusive !== null) return 'descending';
-      if (this.lowestAscendingCall < this.lift.currentFloor) return 'descending';
-      return 'ascending';
-    }
-    if (this.nextStop === this.lift.currentFloor) {
-      return this.floors[this.lift.currentFloor].calling.ascending ? 'ascending' : 'descending';
-    } else {
-      return this.nextStop > this.lift.currentFloor ? 'ascending' : 'descending';
-    }
-  }
-  get nextStop() {
-    if (this.lift.isAscending) return this.nextAscendingStopExclusive ?? this.highestDescendingCall;
-    if (this.lift.isDescending) return this.nextDescendingStopExclusive ?? this.lowestAscendingCall;
-    return this.lowestAscendingCall ?? this.highestDescendingCall;
-  }
-  async summonLift() {
-    if (!this.lift.isIdle) return;
-    await this.cycleLift();
-    this.lift.direction = null;
-  }
-  async cycleLift() {
-    this.lift.direction = this.nextLiftDirection;
-    await this.embarkPassengers();
-    if (this.nextStop !== null) {
-      await delay(1000);
-      await this.lift.goToFloor(this.nextStop);
-      await this.disembarkPassengers();
-      await this.cycleLift();
-    }
-  }
-  async disembarkPassengers() {
-    const criteria = passenger => passenger.destination === this.lift.currentFloor;
-    await transferPassengers(this.lift.compartment, this.floors[this.lift.currentFloor].disembarkArea, criteria);
-  }
-  async embarkPassengers() {
-    const criteria = passenger => passenger.destination > this.lift.currentFloor === this.lift.isAscending;
-    await transferPassengers(this.floors[this.lift.currentFloor].waitingArea, this.lift.compartment, criteria);
   }
   render() {
     return `<div data-id="${this.id}" class="building">

@@ -14,28 +14,6 @@ export default class Lift extends PassengerContainer {
     this.currentSpeed = 0; // px/ms
     // this.capacity = 9;
   }
-  get isAscending() {
-    return this.direction === 'ascending';
-  }
-  get isDescending() {
-    return this.direction === 'descending';
-  }
-  get isIdle() {
-    return this.direction === null;
-  }
-  get passengerDestinations() {
-    return [...new Set(this.compartment.passengers.map(passenger => passenger.destination))];
-  }
-  get currentFloor() {
-    return locationToFloorNumber(this.location, this.isAscending);
-  }
-  get location() {
-    return this._location;
-  }
-  set location(newLocation) {
-    this._location = newLocation;
-    this.element.style.transform = `translateY(-${newLocation}px)`;
-  }
   async goToFloor(floorNum) {
     const targetLocation = floorNumberToLocation(floorNum);
     let lastTimestamp;
@@ -68,6 +46,28 @@ export default class Lift extends PassengerContainer {
 
       window.requestAnimationFrame(animateMovement);
     });
+  }
+  get isAscending() {
+    return this.direction === 'ascending';
+  }
+  get isDescending() {
+    return this.direction === 'descending';
+  }
+  get isIdle() {
+    return this.direction === null;
+  }
+  get passengerDestinations() {
+    return [...new Set(this.compartment.passengers.map(passenger => passenger.destination))];
+  }
+  get currentFloor() {
+    return locationToFloorNumber(this.location, this.isAscending);
+  }
+  get location() {
+    return this._location;
+  }
+  set location(newLocation) {
+    this._location = newLocation;
+    this.element.style.transform = `translateY(-${newLocation}px)`;
   }
   render() {
     return `<div data-id="${this.id}" class="lift" style="transform:translateY(-${this.location}px)">
