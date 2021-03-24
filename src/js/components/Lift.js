@@ -1,6 +1,7 @@
 import PassengerContainer from './PassengerContainer.js';
 import LiftCompartment from './LiftCompartment.js';
 import { floorNumberToLocation, locationToFloorNumber } from '../functions/locationTransforms.js';
+import stoppingDistance from '../functions/stoppingDistance.js';
 
 export default class Lift extends PassengerContainer {
   constructor() {
@@ -28,9 +29,6 @@ export default class Lift extends PassengerContainer {
   get currentFloor() {
     return locationToFloorNumber(this.location, this.isAscending);
   }
-  get stoppingDistance() {
-    return this.currentSpeed ** 2 / (2 * this.acceleration);
-  }
   get location() {
     return this._location;
   }
@@ -48,7 +46,7 @@ export default class Lift extends PassengerContainer {
           if (lastTimestamp === undefined) lastTimestamp = currentTimestamp;
           const frameTime = currentTimestamp - lastTimestamp;
           const distanceToTarget = Math.abs(targetLocation - this.location);
-          if (distanceToTarget > this.stoppingDistance) {
+          if (distanceToTarget > stoppingDistance(this.currentSpeed, this.acceleration)) {
             this.currentSpeed = Math.min(this.maxSpeed, this.currentSpeed + this.acceleration * frameTime);
           } else {
             this.currentSpeed -= this.acceleration * frameTime;
