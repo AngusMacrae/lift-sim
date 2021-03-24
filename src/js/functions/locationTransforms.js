@@ -1,13 +1,11 @@
+const FLOOR_HEIGHT = 108; // px
+
 function floorNumberToLocation(floorNumber) {
-  return floorNumber * 108;
+  return floorNumber * FLOOR_HEIGHT;
 }
 
 function locationToFloorNumber(liftLocation, liftAscending) {
-  if (liftAscending) {
-    return Math.floor(liftLocation / 108);
-  } else {
-    return Math.ceil(liftLocation / 108);
-  }
+  return liftAscending ? Math.floor(liftLocation / FLOOR_HEIGHT) : Math.ceil(liftLocation / FLOOR_HEIGHT);
 }
 
 export { floorNumberToLocation, locationToFloorNumber };
