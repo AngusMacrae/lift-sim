@@ -8,14 +8,13 @@ export default class PassengerContainer extends DynamicElement {
   }
   async removePassenger(callback) {
     const index = this.passengers.findIndex(callback);
-    if (index > -1) {
-      await delay(1000);
-      const passenger = this.passengers.splice(index, 1)[0];
-      this.renderInPlace();
-      return passenger;
-    } else {
-      return null;
-    }
+
+    if (index === -1) return null;
+
+    await delay(1000);
+    const passenger = this.passengers.splice(index, 1)[0];
+    this.renderInPlace();
+    return passenger;
   }
   addPassenger(passenger) {
     this.passengers.push(passenger);
