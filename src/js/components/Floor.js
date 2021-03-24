@@ -11,7 +11,10 @@ export default class Floor extends DynamicElement {
     this.disembarkArea = new DisembarkArea(floorNum);
   }
   get calling() {
-    return this.waitingArea.getCallingStatus();
+    return {
+      ascending: this.waitingArea.callingUp,
+      descending: this.waitingArea.callingDown,
+    };
   }
   render() {
     return `<div data-id="${this.id}" class="floor" data-floor="${this.floorNumber}">

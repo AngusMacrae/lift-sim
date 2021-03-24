@@ -8,11 +8,11 @@ export default class WaitingArea extends PassengerContainer {
     super();
     this.floorNumber = floorNum;
   }
-  getCallingStatus() {
-    return {
-      ascending: this.passengers.some(passenger => passenger.destination > this.floorNumber),
-      descending: this.passengers.some(passenger => passenger.destination < this.floorNumber),
-    };
+  get callingUp() {
+    return this.passengers.some(passenger => passenger.destination > this.floorNumber);
+  }
+  get callingDown() {
+    return this.passengers.some(passenger => passenger.destination < this.floorNumber);
   }
   newPassenger(destination) {
     this.passengers.push(new Passenger(destination));
@@ -24,10 +24,8 @@ export default class WaitingArea extends PassengerContainer {
     this.element.querySelector('.waiting-area').addEventListener('drop', event => drop_handler(event));
   }
   render() {
-    let classString = '';
-    classString += this.getCallingStatus().ascending ? ' call-up' : '';
-    classString += this.getCallingStatus().descending ? ' call-down' : '';
-    return `<div data-id="${this.id}" class="waiting-area-container${classString}">
+    const classString = `${this.callingUp ? 'call-up' : ''} ${this.callingDown ? 'call-down' : ''}`;
+    return `<div data-id="${this.id}" class="waiting-area-container ${classString}">
               <div class="call-arrow-container">
                 <img class="arrow arrow-up" src="img/up-arrow.svg" onload="SVGInject(this)" />
                 <img class="arrow arrow-down" src="img/up-arrow.svg" onload="SVGInject(this)" />

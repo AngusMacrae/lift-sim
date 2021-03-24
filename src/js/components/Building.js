@@ -19,11 +19,11 @@ export default class Building extends DynamicElement {
     return this.lowestAscendingCall ?? this.highestDescendingCall;
   }
   get lowestAscendingCall() {
-    const floor = this.floors.find(floor => floor.calling.up);
+    const floor = this.floors.find(floor => floor.calling.ascending);
     return floor ? floor.floorNumber : null;
   }
   get highestDescendingCall() {
-    const floor = [...this.floors].reverse().find(floor => floor.calling.down);
+    const floor = [...this.floors].reverse().find(floor => floor.calling.descending);
     return floor ? floor.floorNumber : null;
   }
   get nextAscendingStopExclusive() {
