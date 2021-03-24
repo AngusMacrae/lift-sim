@@ -46,12 +46,12 @@ export default class Building extends DynamicElement {
     const floor = floorsOnPath.find(floor => floor.calling[direction] || this.lift.passengerDestinations.includes(floor.floorNumber));
     return floor ? floor.floorNumber : null;
   }
-  async summonLift(floorNum) {
+  async summonLift() {
     if (!this.lift.isIdle) return;
-    await this.cycleLift(floorNum);
+    await this.cycleLift();
     this.lift.direction = null;
   }
-  setLiftDirection(floorNum) {
+  setLiftDirection() {
     if (this.lift.isAscending) {
       if (this.nextAscendingStopInclusive) return;
       if (this.highestDescendingCall > this.lift.currentFloor) return;
@@ -61,21 +61,21 @@ export default class Building extends DynamicElement {
       if (this.lowestAscendingCall < this.lift.currentFloor) return;
       this.lift.direction = 'ascending';
     } else if (this.lift.isIdle) {
-      if (floorNum === this.lift.currentFloor) {
-        this.lift.direction = this.floors[floorNum].waitingArea.passengers[0].destination > this.lift.currentFloor ? 'ascending' : 'descending';
+      if (this.nextStop === this.lift.currentFloor) {
+        this.lift.direction = this.floors[this.nextStop].waitingArea.passengers[0].destination > this.lift.currentFloor ? 'ascending' : 'descending';
       } else {
-        this.lift.direction = floorNum > this.lift.currentFloor ? 'ascending' : 'descending';
+        this.lift.direction = this.nextStop > this.lift.currentFloor ? 'ascending' : 'descending';
       }
     }
   }
-  async cycleLift(floorNum) {
-    this.setLiftDirection(floorNum);
+  async cycleLift() {
+    this.setLiftDirection();
     await this.embarkPassengers();
     if (this.nextStop !== null) {
       await delay(1000);
       await this.lift.goToFloor(this.nextStop);
       await this.disembarkPassengers();
-      await this.cycleLift(null);
+      await this.cycleLift();
     }
   }
   async disembarkPassengers() {
