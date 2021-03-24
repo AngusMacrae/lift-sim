@@ -83,12 +83,7 @@ export default class Building extends DynamicElement {
     await transferPassengers(this.lift.compartment, this.floors[this.lift.currentFloor].disembarkArea, criteria);
   }
   async embarkPassengers() {
-    let criteria;
-    if (this.lift.isAscending) {
-      criteria = passenger => passenger.destination > this.lift.currentFloor;
-    } else {
-      criteria = passenger => passenger.destination < this.lift.currentFloor;
-    }
+    const criteria = passenger => passenger.destination > this.lift.currentFloor === this.lift.isAscending;
     await transferPassengers(this.floors[this.lift.currentFloor].waitingArea, this.lift.compartment, criteria);
   }
   render() {
