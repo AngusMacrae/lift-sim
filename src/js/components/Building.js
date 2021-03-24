@@ -14,13 +14,9 @@ export default class Building extends DynamicElement {
     }
   }
   get nextStop() {
-    if (this.lift.isAscending) {
-      return this.nextAscendingStopExclusive ?? this.highestDescendingCall;
-    } else if (this.lift.isDescending) {
-      return this.nextDescendingStopExclusive ?? this.lowestAscendingCall;
-    } else {
-      return this.lowestAscendingCall ?? this.highestDescendingCall;
-    }
+    if (this.lift.isAscending) return this.nextAscendingStopExclusive ?? this.highestDescendingCall;
+    if (this.lift.isDescending) return this.nextDescendingStopExclusive ?? this.lowestAscendingCall;
+    return this.lowestAscendingCall ?? this.highestDescendingCall;
   }
   get lowestAscendingCall() {
     const floor = this.floors.find(floor => floor.calling.up);
