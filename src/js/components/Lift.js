@@ -7,7 +7,7 @@ export default class Lift extends PassengerContainer {
     super();
     this.compartment = new LiftCompartment();
     this.status = 'idle'; // idle, ascending, descending
-    this.location = 0;
+    this._location = 0;
     this.maxSpeed = 10; // px/ms
     this.acceleration = 0.1; // px/ms^2
     this.currentSpeed = 0; // px/ms
@@ -28,8 +28,11 @@ export default class Lift extends PassengerContainer {
   get stoppingDistance() {
     return this.currentSpeed ** 2 / (2 * this.acceleration) + 1;
   }
-  setLocation(newLocation) {
-    this.location = newLocation;
+  get location() {
+    return this._location;
+  }
+  set location(newLocation) {
+    this._location = newLocation;
     this.element.style.transform = `translateY(-${this.location}px)`;
   }
   async goToFloor(floorNum) {
@@ -48,14 +51,14 @@ export default class Lift extends PassengerContainer {
           if (start === undefined) start = timestamp;
           const elapsedTime = timestamp - start;
           if (this.ascending) {
-            this.setLocation(this.location + this.currentSpeed);
+            this.location += this.currentSpeed;
           } else {
-            this.setLocation(this.location - this.currentSpeed);
+            this.location -= this.currentSpeed;
           }
           window.requestAnimationFrame(animateMovement);
         } else {
           this.currentSpeed = 0;
-          this.setLocation(targetLocation);
+          this.location = targetLocation;
           resolve();
         }
       };
