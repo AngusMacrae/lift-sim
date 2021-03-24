@@ -49,7 +49,7 @@ export default class Building extends DynamicElement {
   async summonLift(floorNum) {
     if (!this.lift.isIdle) return;
     await this.cycleLift(floorNum);
-    this.lift.direction = 'idle';
+    this.lift.direction = null;
   }
   setLiftDirection(floorNum) {
     if (this.lift.isAscending) {

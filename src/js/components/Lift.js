@@ -6,7 +6,7 @@ export default class Lift extends PassengerContainer {
   constructor() {
     super();
     this.compartment = new LiftCompartment();
-    this.direction = 'idle'; // idle, ascending, descending
+    this.direction = null; // 'ascending', 'descending', null
     this._location = 0;
     this.maxSpeed = 0.3; // px/ms
     this.acceleration = 0.0005; // px/ms^2
@@ -20,7 +20,7 @@ export default class Lift extends PassengerContainer {
     return this.direction === 'descending';
   }
   get isIdle() {
-    return this.direction === 'idle';
+    return this.direction === null;
   }
   get passengerDestinations() {
     return [...new Set(this.compartment.passengers.map(passenger => passenger.destination))];
