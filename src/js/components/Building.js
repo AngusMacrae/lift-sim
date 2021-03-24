@@ -51,36 +51,35 @@ export default class Building extends DynamicElement {
   }
   async summonLift(floorNum) {
     if (!this.lift.isIdle) return;
-
-    if (floorNum === this.lift.currentFloor) {
-      this.lift.direction = this.floors[floorNum].waitingArea.passengers[0].destination > this.lift.currentFloor ? 'ascending' : 'descending';
-    } else {
-      this.lift.direction = floorNum > this.lift.currentFloor ? 'ascending' : 'descending';
-    }
-    await this.cycleLift();
+    await this.cycleLift(floorNum);
     this.lift.direction = 'idle';
   }
-  setLiftDirection() {
+  setLiftDirection(floorNum) {
     if (this.lift.isAscending) {
       if (this.nextAscendingStopInclusive) return;
       if (this.highestDescendingCall > this.lift.currentFloor) return;
       this.lift.direction = 'descending';
-    } else {
+    } else if (this.lift.isDescending) {
       if (this.nextDescendingStopInclusive) return;
       if (this.lowestAscendingCall < this.lift.currentFloor) return;
       this.lift.direction = 'ascending';
+    } else if (this.lift.isIdle) {
+      if (floorNum === this.lift.currentFloor) {
+        this.lift.direction = this.floors[floorNum].waitingArea.passengers[0].destination > this.lift.currentFloor ? 'ascending' : 'descending';
+      } else {
+        this.lift.direction = floorNum > this.lift.currentFloor ? 'ascending' : 'descending';
+      }
     }
   }
-  async cycleLift() {
+  async cycleLift(floorNum) {
+    this.setLiftDirection(floorNum);
     await this.embarkPassengers();
-    this.setLiftDirection();
     if (this.nextStop === null) {
       this.lift.direction = 'idle';
     } else {
       await this.lift.goToFloor(this.nextStop);
       await this.disembarkPassengers();
-      this.setLiftDirection();
-      await this.cycleLift();
+      await this.cycleLift(null);
     }
   }
   async disembarkPassengers() {
