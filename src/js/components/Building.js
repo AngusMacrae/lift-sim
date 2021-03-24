@@ -71,10 +71,8 @@ export default class Building extends DynamicElement {
   async cycleLift(floorNum) {
     this.setLiftDirection(floorNum);
     await this.embarkPassengers();
-    await delay(1000);
-    if (this.nextStop === null) {
-      this.lift.direction = 'idle';
-    } else {
+    if (this.nextStop !== null) {
+      await delay(1000);
       await this.lift.goToFloor(this.nextStop);
       await this.disembarkPassengers();
       await this.cycleLift(null);
