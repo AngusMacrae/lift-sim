@@ -2,11 +2,11 @@ function floorNumberToLocation(floorNumber) {
   return floorNumber * 108;
 }
 
-function locationToFloorNumber(location, ascending) {
-  if (ascending) {
-    return Math.floor(location / 108);
+function locationToFloorNumber(liftLocation, liftAscending) {
+  if (liftAscending) {
+    return Math.floor(liftLocation / 108);
   } else {
-    return Math.ceil(location / 108);
+    return Math.ceil(liftLocation / 108);
   }
 }
 
