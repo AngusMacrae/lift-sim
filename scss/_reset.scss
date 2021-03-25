@@ -21,8 +21,8 @@ body {
   line-height: 1.5;
 }
 
-ul[class],
-ol[class] {
+ul,
+ol {
   list-style: none;
   padding: 0;
 }
@@ -33,19 +33,20 @@ img {
   display: block;
 }
 
+a {
+  text-decoration: inherit;
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 input,
 button,
 textarea,
 select {
   font: inherit;
-}
-
-.flow {
-  --flow-space: 1em;
-}
-
-.flow > * + * {
-  margin-top: var(--flow-space);
 }
 
 @media (prefers-reduced-motion: reduce) {

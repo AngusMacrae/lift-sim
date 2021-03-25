@@ -1,0 +1,34 @@
+$primary-colour: #05d9e8;
+$emphasised-primary-colour: #d1f7ff;
+$deemphasised-primary-colour: #005678;
+$highlight-colour: #ff2a6d;
+$background-colour: #01012b;
+$floor-0-colour: #005678;
+$floor-1-colour: #05d9e8;
+$floor-2-colour: #ff85ab;
+$floor-3-colour: #d1f7ff;
+$floor-4-colour: #fffd98;
+$floor-5-colour: #fea82f;
+[data-floor='0'] {
+  --floor-colour: #{$floor-0-colour};
+}
+[data-floor='1'] {
+  --floor-colour: #{$floor-1-colour};
+}
+[data-floor='2'] {
+  --floor-colour: #{$floor-2-colour};
+}
+[data-floor='3'] {
+  --floor-colour: #{$floor-3-colour};
+}
+[data-floor='4'] {
+  --floor-colour: #{$floor-4-colour};
+}
+[data-floor='5'] {
+  --floor-colour: #{$floor-5-colour};
+}
+$border-radius: 1rem;
+
+$lift-shaft-location: 30%;
+$lift-width: 85px;
+$lift-height: 100px;

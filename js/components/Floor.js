@@ -1,7 +1,7 @@
 import DynamicElement from './DynamicElement.js';
 import WaitingArea from './WaitingArea.js';
 import DisembarkArea from './DisembarkArea.js';
-import numberToOrdinal from '../functions/numberToOrdinal.js';
+import floorNumberToLabel from '../functions/floorNumberToLabel.js';
 
 export default class Floor extends DynamicElement {
   constructor(floorNum) {
@@ -18,7 +18,7 @@ export default class Floor extends DynamicElement {
   }
   render() {
     return `<div data-id="${this.id}" class="floor" data-floor="${this.floorNumber}">
-              <span class="floor-label">${numberToOrdinal(this.floorNumber)} floor</span>
+              <span class="floor-label">${floorNumberToLabel(this.floorNumber)}</span>
               ${this.disembarkArea.render()}
               ${this.waitingArea.render()}
             </div>`;

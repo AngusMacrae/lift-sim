@@ -1,7 +1,7 @@
 import Building from './components/Building.js';
 import CommandPalette from './components/CommandPalette.js';
 
-const NUM_FLOORS = 5;
+const NUM_FLOORS = 6;
 
 const building = new Building(NUM_FLOORS);
 const commandPalette = new CommandPalette(NUM_FLOORS);
