@@ -8,22 +8,22 @@ export default class Lift extends PassengerContainer {
     super();
     this.compartment = new LiftCompartment();
     this.direction = null; // 'ascending', 'descending', null
-    this._location = 0;
+    this.currentSpeed = 0; // px/ms
     this.maxSpeed = 0.3; // px/ms
     this.acceleration = 0.0005; // px/ms^2
-    this.currentSpeed = 0; // px/ms
-    // this.capacity = 9;
+    this.targetLocation = null; // px
+    this._location = 0; // px
   }
   async goToFloor(floorNum) {
-    const targetLocation = floorNumberToLocation(floorNum);
-    let lastTimestamp;
+    this.targetLocation = floorNumberToLocation(floorNum);
+    let previousTimestamp;
     return new Promise(resolve => {
-      const animateMovement = currentTimestamp => {
-        const arrivedAtTarget = this.isAscending ? this.location > targetLocation : this.location < targetLocation;
+      const move = currentTimestamp => {
+        const arrivedAtTarget = this.isAscending ? this.location > this.targetLocation : this.location < this.targetLocation;
         if (!arrivedAtTarget) {
-          if (lastTimestamp === undefined) lastTimestamp = currentTimestamp;
-          const frameTime = currentTimestamp - lastTimestamp;
-          const distanceToTarget = Math.abs(targetLocation - this.location);
+          if (previousTimestamp === undefined) previousTimestamp = currentTimestamp;
+          const frameTime = currentTimestamp - previousTimestamp;
+          const distanceToTarget = Math.abs(this.targetLocation - this.location);
           if (distanceToTarget > stoppingDistance(this.currentSpeed, this.acceleration)) {
             this.currentSpeed = Math.min(this.maxSpeed, this.currentSpeed + this.acceleration * frameTime);
           } else {
@@ -35,17 +35,25 @@ export default class Lift extends PassengerContainer {
           } else {
             this.location -= this.currentSpeed * frameTime;
           }
-          lastTimestamp = currentTimestamp;
-          window.requestAnimationFrame(animateMovement);
+          // console.log(this.location.toFixed(3));
+          previousTimestamp = currentTimestamp;
+          window.requestAnimationFrame(move);
         } else {
           this.currentSpeed = 0;
-          this.location = targetLocation;
+          this.location = this.targetLocation;
+          this.targetLocation = null;
           resolve();
         }
       };
 
-      window.requestAnimationFrame(animateMovement);
+      window.requestAnimationFrame(move);
     });
+  }
+  divertToFloor(floorNumber) {
+    const distanceToTarget = Math.abs(floorNumberToLocation(floorNumber) - this.location);
+    if (distanceToTarget > stoppingDistance(this.currentSpeed, this.acceleration)) {
+      this.targetLocation = floorNumberToLocation(floorNumber);
+    }
   }
   get isAscending() {
     return this.direction === 'ascending';

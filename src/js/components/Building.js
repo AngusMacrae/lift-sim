@@ -13,10 +13,13 @@ export default class Building extends DynamicElement {
       this.floors.push(new Floor(i));
     }
   }
-  async summonLift() {
-    if (!this.lift.isIdle) return;
-    await this.cycleLift();
-    this.lift.direction = null;
+  async summonLift(floorNumber) {
+    if (this.lift.isIdle) {
+      await this.cycleLift();
+      this.lift.direction = null;
+    } else if (floorNumber === this.nextStop) {
+      this.lift.divertToFloor(floorNumber);
+    }
   }
   async cycleLift() {
     this.lift.direction = this.nextLiftDirection;
