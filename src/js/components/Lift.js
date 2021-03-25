@@ -27,7 +27,7 @@ export default class Lift extends PassengerContainer {
           if (distanceToTarget > stoppingDistance(this.currentSpeed, this.acceleration)) {
             this.currentSpeed = Math.min(this.maxSpeed, this.currentSpeed + this.acceleration * frameTime);
           } else {
-            this.currentSpeed -= this.acceleration * frameTime;
+            this.currentSpeed = Math.max(0.01, this.currentSpeed - this.acceleration * frameTime);
           }
           // console.log(this.currentSpeed.toFixed(3));
           if (this.isAscending) {
