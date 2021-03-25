@@ -1,5 +1,5 @@
 import DynamicElement from './DynamicElement.js';
-import { dragstart_handler } from '../functions/dragHandlers.js';
+import { dragstartHandler } from '../functions/dragHandlers.js';
 
 export default class AddPassengerDraggable extends DynamicElement {
   constructor(destination) {
@@ -7,7 +7,7 @@ export default class AddPassengerDraggable extends DynamicElement {
     this.destination = +destination;
   }
   initialiseEventListeners() {
-    this.element.addEventListener('dragstart', event => dragstart_handler(event));
+    this.element.addEventListener('dragstart', dragstartHandler);
   }
   render() {
     return `<li data-id="${this.id}" class="passenger" data-floor="${this.destination}" draggable="true">

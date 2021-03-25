@@ -1,28 +1,25 @@
 import building from '../script.js';
 
-function dragstart_handler(event) {
+function dragstartHandler(event) {
   event.dataTransfer.setData('text/plain', event.target.dataset.floor);
   event.dataTransfer.dropEffect = 'move';
-  // console.log('drag start, destination: ' + event.target.dataset.floor);
 }
 
-function dragover_handler(event) {
+function dragoverHandler(event) {
   event.preventDefault();
-  // show invalid drop effect if passenger destination is same as dragged floor
-  // also add class to floor to show visually
-  event.dataTransfer.dropEffect = 'move';
 }
 
-function drop_handler(event) {
-  event.preventDefault();
-  // console.log('dropped');
-  // console.log(event.target.closest('.waiting-area-container').dataset.id);
-  // console.log(building);
+function dragenterHandler(event) {}
+
+function dragleaveHandler(event) {}
+
+function dropHandler(event) {
   const passengerDestination = event.dataTransfer.getData('text/plain');
   const floorNumber = event.target.closest('.floor').dataset.floor;
   if (passengerDestination != floorNumber) {
     building.floors[floorNumber].waitingArea.newPassenger(passengerDestination);
+    event.preventDefault();
   }
 }
 
-export { dragstart_handler, dragover_handler, drop_handler };
+export { dragstartHandler, dragenterHandler, dragoverHandler, dragleaveHandler, dropHandler };

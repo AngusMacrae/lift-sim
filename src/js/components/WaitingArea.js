@@ -1,6 +1,6 @@
 import PassengerContainer from './PassengerContainer.js';
 import Passenger from './Passenger.js';
-import { dragover_handler, drop_handler } from '../functions/dragHandlers.js';
+import { dragenterHandler, dragoverHandler, dragleaveHandler, dropHandler } from '../functions/dragHandlers.js';
 import building from '../script.js';
 
 export default class WaitingArea extends PassengerContainer {
@@ -20,8 +20,10 @@ export default class WaitingArea extends PassengerContainer {
     return this.passengers.some(passenger => passenger.destination < this.floorNumber);
   }
   initialiseEventListeners() {
-    this.element.querySelector('.waiting-area').addEventListener('dragover', event => dragover_handler(event));
-    this.element.querySelector('.waiting-area').addEventListener('drop', event => drop_handler(event));
+    this.element.querySelector('.waiting-area').addEventListener('dragenter', dragenterHandler);
+    this.element.querySelector('.waiting-area').addEventListener('dragover', dragoverHandler);
+    this.element.querySelector('.waiting-area').addEventListener('dragleave', dragleaveHandler);
+    this.element.querySelector('.waiting-area').addEventListener('drop', dropHandler);
   }
   render() {
     const classString = `${this.callingUp ? 'call-up' : ''} ${this.callingDown ? 'call-down' : ''}`;
