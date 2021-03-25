@@ -1,5 +1,6 @@
 import Building from './components/Building.js';
 import CommandPalette from './components/CommandPalette.js';
+import '../scss/styles.scss';
 
 const NUM_FLOORS = 5;
 

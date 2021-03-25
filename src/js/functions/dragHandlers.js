@@ -1,4 +1,4 @@
-import building from '../script.js';
+import building from '../main.js';
 
 function dragstartHandler(event) {
   event.dataTransfer.setData('text/plain', event.target.dataset.floor);

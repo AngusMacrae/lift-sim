@@ -1,7 +1,8 @@
 import PassengerContainer from './PassengerContainer.js';
 import Passenger from './Passenger.js';
 import { dragenterHandler, dragoverHandler, dragleaveHandler, dropHandler } from '../functions/dragHandlers.js';
-import building from '../script.js';
+import building from '../main.js';
+import arrowSVG from '../../img/up-arrow.svg';
 
 export default class WaitingArea extends PassengerContainer {
   constructor(floorNum) {
@@ -29,8 +30,8 @@ export default class WaitingArea extends PassengerContainer {
     const classString = `${this.callingUp ? 'call-up' : ''} ${this.callingDown ? 'call-down' : ''}`;
     return `<div data-id="${this.id}" class="waiting-area-container ${classString}">
               <div class="call-arrow-container">
-                <img class="arrow arrow-up" src="img/up-arrow.svg" onload="SVGInject(this)" />
-                <img class="arrow arrow-down" src="img/up-arrow.svg" onload="SVGInject(this)" />
+                <img class="arrow arrow-up" src="${arrowSVG}" onload="SVGInject(this)" />
+                <img class="arrow arrow-down" src="${arrowSVG}" onload="SVGInject(this)" />
               </div>
               <ul class="waiting-area">
                 ${this.passengers.map(passenger => passenger.render()).join('')}

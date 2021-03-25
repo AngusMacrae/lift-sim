@@ -1,5 +1,6 @@
 import DynamicElement from './DynamicElement.js';
 import { dragstartHandler } from '../functions/dragHandlers.js';
+import passengerSVG from '../../img/passenger.svg';
 
 export default class AddPassengerDraggable extends DynamicElement {
   constructor(destination) {
@@ -11,7 +12,7 @@ export default class AddPassengerDraggable extends DynamicElement {
   }
   render() {
     return `<li data-id="${this.id}" class="passenger" data-floor="${this.destination}" draggable="true">
-              <img src="img/passenger.svg" onload="SVGInject(this)" />
+              <img src="${passengerSVG}" onload="SVGInject(this)" />
             </li>`;
   }
 }

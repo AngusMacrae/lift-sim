@@ -2,7 +2,9 @@
   "name": "lift-sim",
   "version": "2.0.0",
   "description": "Lift Simulator",
+  "private": true,
   "scripts": {
+    "build": "webpack --config webpack.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,8 +17,12 @@
     "url": "https://github.com/AngusMacrae/lift-sim/issues"
   },
   "homepage": "https://github.com/AngusMacrae/lift-sim#readme",
-  "dependencies": {},
   "devDependencies": {
+    "css-loader": "^5.2.0",
+    "html-webpack-plugin": "^5.3.1",
+    "sass": "^1.32.8",
+    "sass-loader": "^11.0.1",
+    "style-loader": "^2.0.0",
     "webpack": "^5.28.0",
     "webpack-cli": "^4.5.0"
   }
