@@ -38,14 +38,10 @@ export default class Building extends DynamicElement {
   }
   get nextLiftDirection() {
     if (this.lift.isAscending) {
-      if (this.nextAscendingStopInclusive !== null) return 'ascending';
-      if (this.highestDescendingCall > this.lift.currentFloor) return 'ascending';
-      return 'descending';
+      return this.nextAscendingStopInclusive === null ? 'descending' : 'ascending';
     }
     if (this.lift.isDescending) {
-      if (this.nextDescendingStopInclusive !== null) return 'descending';
-      if (this.lowestAscendingCall < this.lift.currentFloor) return 'descending';
-      return 'ascending';
+      return this.nextDescendingStopInclusive === null ? 'ascending' : 'descending';
     }
     if (this.nextStop === this.lift.currentFloor) {
       return this.floors[this.lift.currentFloor].calling.ascending ? 'ascending' : 'descending';
