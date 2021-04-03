@@ -1,10 +1,14 @@
-function* idGenerator() {
+function* idGeneratorFunction() {
   let index = 0;
   while (true) {
     yield index++;
   }
 }
 
-const componentId = idGenerator();
+const idGenerator = idGeneratorFunction();
 
-export default componentId;
+function newId() {
+  return idGenerator.next().value;
+}
+
+export default newId;

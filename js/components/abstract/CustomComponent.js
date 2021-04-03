@@ -1,8 +1,8 @@
-import componentId from '../../functions/idGenerator.js';
+import newId from '../../functions/idGenerator.js';
 
 export default class CustomComponent {
   constructor() {
-    this.id = '' + componentId.next().value;
+    this.id = newId();
   }
   get element() {
     return document.querySelector(`[data-id="${this.id}"]`);
