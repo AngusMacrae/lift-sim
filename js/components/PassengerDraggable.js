@@ -1,10 +1,9 @@
-import CustomComponent from './abstract/CustomComponent.js';
+import Passenger from './Passenger.js';
 import { dragstartHandler } from '../functions/dragHandlers.js';
 
-export default class AddPassengerDraggable extends CustomComponent {
+export default class PassengerDraggable extends Passenger {
   constructor(destination) {
-    super();
-    this.destination = +destination;
+    super(destination);
   }
   initialiseEventListeners() {
     this.element.addEventListener('dragstart', dragstartHandler);
