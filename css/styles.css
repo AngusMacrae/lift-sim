@@ -139,7 +139,7 @@ body {
   max-width: 100%;
   display: -ms-grid;
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .passenger svg {
@@ -149,8 +149,13 @@ body {
   fill: var(--floor-colour);
 }
 
+.description-text > * + * {
+  margin-top: 1em;
+}
+
 .header h1 {
   font-size: 4rem;
+  line-height: 1;
   color: #ff2a6d;
   -webkit-text-stroke: 0.5px #01012b;
 }
