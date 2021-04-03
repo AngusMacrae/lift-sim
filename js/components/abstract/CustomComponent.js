@@ -1,6 +1,6 @@
 import componentId from '../../functions/idGenerator.js';
 
-export default class DynamicElement {
+export default class CustomComponent {
   constructor() {
     this.id = '' + componentId.next().value;
   }

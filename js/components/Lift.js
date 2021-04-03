@@ -1,9 +1,9 @@
-import DynamicElement from './abstract/DynamicElement.js';
+import CustomComponent from './abstract/CustomComponent.js';
 import LiftCompartment from './LiftCompartment.js';
 import { floorNumberToLocation, locationToFloorNumber } from '../functions/locationTransforms.js';
 import stoppingDistance from '../functions/stoppingDistance.js';
 
-export default class Lift extends DynamicElement {
+export default class Lift extends CustomComponent {
   constructor() {
     super();
     this.compartment = new LiftCompartment();

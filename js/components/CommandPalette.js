@@ -1,7 +1,7 @@
-import DynamicElement from './abstract/DynamicElement.js';
+import CustomComponent from './abstract/CustomComponent.js';
 import AddPassengerDraggable from './AddPassengerDraggable.js';
 
-export default class CommandPalette extends DynamicElement {
+export default class CommandPalette extends CustomComponent {
   constructor(numberOfFloors) {
     super();
     this.draggables = [];

@@ -1,10 +1,10 @@
-import DynamicElement from './abstract/DynamicElement.js';
+import CustomComponent from './abstract/CustomComponent.js';
 import Lift from './Lift.js';
 import Floor from './Floor.js';
 import delay from '../functions/delay.js';
 import transferPassengers from '../functions/transferPassengers.js';
 
-export default class Building extends DynamicElement {
+export default class Building extends CustomComponent {
   constructor(numberOfFloors) {
     super();
     this.lift = new Lift();

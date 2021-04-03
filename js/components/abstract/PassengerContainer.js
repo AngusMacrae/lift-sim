@@ -1,7 +1,7 @@
-import DynamicElement from './DynamicElement.js';
+import CustomComponent from './CustomComponent.js';
 import delay from '../../functions/delay.js';
 
-export default class PassengerContainer extends DynamicElement {
+export default class PassengerContainer extends CustomComponent {
   constructor() {
     super();
     this.passengers = [];

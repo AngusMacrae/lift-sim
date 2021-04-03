@@ -1,9 +1,9 @@
-import DynamicElement from './abstract/DynamicElement.js';
+import CustomComponent from './abstract/CustomComponent.js';
 import WaitingArea from './WaitingArea.js';
 import DisembarkArea from './DisembarkArea.js';
 import floorNumberToLabel from '../functions/floorNumberToLabel.js';
 
-export default class Floor extends DynamicElement {
+export default class Floor extends CustomComponent {
   constructor(floorNum) {
     super();
     this.floorNumber = +floorNum;

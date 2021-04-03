@@ -1,7 +1,7 @@
-import DynamicElement from './abstract/DynamicElement.js';
+import CustomComponent from './abstract/CustomComponent.js';
 import { dragstartHandler } from '../functions/dragHandlers.js';
 
-export default class AddPassengerDraggable extends DynamicElement {
+export default class AddPassengerDraggable extends CustomComponent {
   constructor(destination) {
     super();
     this.destination = +destination;
