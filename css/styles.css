@@ -155,7 +155,7 @@ body {
   -webkit-text-stroke: 0.5px #01012b;
 }
 
-.command-palette {
+.draggables-list {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -169,11 +169,11 @@ body {
           align-items: stretch;
 }
 
-.command-palette li {
+.draggables-list li {
   padding: 0 2%;
 }
 
-.command-palette .passenger {
+.draggables-list .passenger {
   cursor: pointer;
   -webkit-transition: -webkit-transform 0.2s ease;
   transition: -webkit-transform 0.2s ease;
@@ -181,7 +181,7 @@ body {
   transition: transform 0.2s ease, -webkit-transform 0.2s ease;
 }
 
-.command-palette .passenger:hover {
+.draggables-list .passenger:hover {
   -webkit-transform: scale(1.2);
           transform: scale(1.2);
 }
