@@ -1,4 +1,4 @@
-import PassengerContainer from './PassengerContainer.js';
+import PassengerContainer from './abstract/PassengerContainer.js';
 
 export default class DisembarkArea extends PassengerContainer {
   constructor() {

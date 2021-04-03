@@ -1,4 +1,4 @@
-import PassengerContainer from './PassengerContainer.js';
+import PassengerContainer from './abstract/PassengerContainer.js';
 import Passenger from './Passenger.js';
 import { dragenterHandler, dragoverHandler, dragleaveHandler, dropHandler } from '../functions/dragHandlers.js';
 import building from '../script.js';

@@ -1,4 +1,4 @@
-import DynamicElement from './DynamicElement.js';
+import DynamicElement from './abstract/DynamicElement.js';
 import Lift from './Lift.js';
 import Floor from './Floor.js';
 import delay from '../functions/delay.js';

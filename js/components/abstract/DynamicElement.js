@@ -1,4 +1,4 @@
-import componentId from '../functions/idGenerator.js';
+import componentId from '../../functions/idGenerator.js';
 
 export default class DynamicElement {
   constructor() {

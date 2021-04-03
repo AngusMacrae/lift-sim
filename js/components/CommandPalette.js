@@ -1,4 +1,4 @@
-import DynamicElement from './DynamicElement.js';
+import DynamicElement from './abstract/DynamicElement.js';
 import AddPassengerDraggable from './AddPassengerDraggable.js';
 
 export default class CommandPalette extends DynamicElement {

@@ -1,4 +1,4 @@
-import PassengerContainer from './PassengerContainer.js';
+import PassengerContainer from './abstract/PassengerContainer.js';
 import LiftCompartment from './LiftCompartment.js';
 import { floorNumberToLocation, locationToFloorNumber } from '../functions/locationTransforms.js';
 import stoppingDistance from '../functions/stoppingDistance.js';

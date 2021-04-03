@@ -1,4 +1,4 @@
-import DynamicElement from './DynamicElement.js';
+import DynamicElement from './abstract/DynamicElement.js';
 import WaitingArea from './WaitingArea.js';
 import DisembarkArea from './DisembarkArea.js';
 import floorNumberToLabel from '../functions/floorNumberToLabel.js';

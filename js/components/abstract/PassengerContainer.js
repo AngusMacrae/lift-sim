@@ -1,5 +1,5 @@
 import DynamicElement from './DynamicElement.js';
-import delay from '../functions/delay.js';
+import delay from '../../functions/delay.js';
 
 export default class PassengerContainer extends DynamicElement {
   constructor() {

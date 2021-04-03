@@ -1,4 +1,4 @@
-import DynamicElement from './DynamicElement.js';
+import DynamicElement from './abstract/DynamicElement.js';
 import { dragstartHandler } from '../functions/dragHandlers.js';
 
 export default class AddPassengerDraggable extends DynamicElement {
